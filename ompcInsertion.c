@@ -49,11 +49,11 @@ double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double *
     return distanceMatrix;
 }
 
-double cheapestInsertion(double **distanceMatrix, int numOfCoords, char *outputFileName, int startingNode)
+int *cheapestInsertion(double **distanceMatrix, int numOfCoords, char *outputFileName, int startingNode)
 {
     int visitedCount = 0;
 
-    int *tour = (int*)malloc((numOfCoords+1)*sizeof(int));
+    int *tour = (int*)malloc((numOfCoords+2)*sizeof(int));
     bool *visited = (bool*)malloc(numOfCoords*sizeof(bool));
     int m=0;
     for(m=0; m<numOfCoords; m++)
@@ -99,7 +99,6 @@ double cheapestInsertion(double **distanceMatrix, int numOfCoords, char *outputF
     int y =0;
     while(visitedCount < numOfCoords)
     {
-
         for(y =0;y< noOfThreads; y++)
         {
             minimumAdditionalCosts[y] = DBL_MAX;
@@ -173,9 +172,11 @@ double cheapestInsertion(double **distanceMatrix, int numOfCoords, char *outputF
     }
     printf("%f", totalLength);
 
-    double tourLength = visitedCount+1;
-    writeTourToFile(tour, tourLength, outputFileName);
-    return totalLength;
+//    double tourLength = visitedCount+1;
+//    writeTourToFile(tour, tourLength, outputFileName);
+
+    tour[numOfCoords-1] = totalLength;
+    return tour;
 }
 
 
@@ -213,13 +214,23 @@ int main(int argc, char *argv[]) {
     int startingNode = 0;
     double shortestTour = DBL_MAX;
 
+    int *tempTour = (int *)malloc(numOfCoords * sizeof(int *));
+    int *finalTour =  (int *)malloc((numOfCoords+1) * sizeof(int *));
+
     for(i = 0; i< numOfCoords; i++)
     {
-        double tempTour = cheapestInsertion(distanceMatrix, numOfCoords, outputfile, startingNode);
-        if(tempTour < shortestTour)
+        tempTour = cheapestInsertion(distanceMatrix, numOfCoords, outputfile, startingNode);
+        if(tempTour[numOfCoords-1] < shortestTour)
         {
-            shortestTour = tempTour;
+            shortestTour = tempTour[numOfCoords-1];
+            int j=0;
+            for(j = 0; j<numOfCoords+1; j++)
+            {
+                finalTour[j] = tempTour[j];
+            }
         }
+
+        writeTourToFile(finalTour, numOfCoords+1, outputFileName);
     }
 
 
