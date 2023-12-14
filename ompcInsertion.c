@@ -230,7 +230,7 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        writeTourToFile(finalTour, numOfCoords+1, outputFileName);
+        writeTourToFile(finalTour, numOfCoords+1, outputfile);
     }
 
 
