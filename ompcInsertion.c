@@ -175,7 +175,7 @@ int *cheapestInsertion(double **distanceMatrix, int numOfCoords, char *outputFil
 //    double tourLength = visitedCount+1;
 //    writeTourToFile(tour, tourLength, outputFileName);
 
-    tour[numOfCoords-1] = totalLength;
+    tour[numOfCoords+1] = totalLength;
     return tour;
 }
 
@@ -220,7 +220,7 @@ int main(int argc, char *argv[]) {
     for(i = 0; i< numOfCoords; i++)
     {
         tempTour = cheapestInsertion(distanceMatrix, numOfCoords, outputfile, startingNode);
-        if(tempTour[numOfCoords-1] < shortestTour)
+        if(tempTour[numOfCoords+1] < shortestTour)
         {
             shortestTour = tempTour[numOfCoords-1];
             int j=0;
