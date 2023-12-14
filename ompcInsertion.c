@@ -222,7 +222,7 @@ int main(int argc, char *argv[]) {
         tempTour = cheapestInsertion(distanceMatrix, numOfCoords, outputfile, startingNode);
         if(tempTour[numOfCoords+1] < shortestTour)
         {
-            shortestTour = tempTour[numOfCoords-1];
+            shortestTour = tempTour[numOfCoords+1];
             int j=0;
             for(j = 0; j<numOfCoords+1; j++)
             {
