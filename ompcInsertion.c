@@ -291,7 +291,7 @@ int main(int argc, char *argv[]) {
         free(distanceMatrix[i]);
     }
     free(distanceMatrix);
-    cleanupStruct(&tempTour);
+//    cleanupStruct(&tempTour);
     return 0;
 }
 
