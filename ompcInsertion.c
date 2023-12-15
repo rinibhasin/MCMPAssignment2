@@ -11,6 +11,21 @@
 #include <omp.h>
 #include <stdlib.h>
 
+
+struct TourData {
+    int* tour;
+    int tourSize;
+};
+
+void initializeStruct(struct TourData* myStruct, int size) {
+    myStruct->tour = (int*)malloc(size * sizeof(int));
+    myStruct->tourSize = size;
+}
+
+void cleanupStruct(struct TourData* myStruct) {
+    free(myStruct->tour);
+}
+
 int readNumOfCoords(char *fileName);
 double **readCoords(char *filename, int numOfCoords);
 void *writeTourToFile(int *tour, int tourLength, char *filename);
@@ -49,11 +64,11 @@ double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double *
     return distanceMatrix;
 }
 
-int *cheapestInsertion(double **distanceMatrix, int numOfCoords, char *outputFileName, int startingNode)
+struct TourData cheapestInsertion(double **distanceMatrix, int numOfCoords, char *outputFileName, int startingNode)
 {
     int visitedCount = 0;
 
-    int *tour = (int*)malloc((numOfCoords+2)*sizeof(int));
+    int *tour = (int*)malloc((numOfCoords+1)*sizeof(int));
     bool *visited = (bool*)malloc(numOfCoords*sizeof(bool));
     int m=0;
     for(m=0; m<numOfCoords; m++)
@@ -186,6 +201,7 @@ int main(int argc, char *argv[]) {
     char *fileName = "16_coords.coord";
     char *outputfile = "output.txt";
 
+    struct TourData tourData;
 
     if (argc > 1) {
         fileName = argv[1];
@@ -198,6 +214,9 @@ int main(int argc, char *argv[]) {
     start = omp_get_wtime();;
 
     int numOfCoords = readNumOfCoords(fileName);
+
+    initializeStruct(&tourData, numOfCoords+1);
+
     double **coordinates = readCoords(fileName, numOfCoords);
 
     double **distanceMatrix = (double **)malloc(numOfCoords * sizeof(double *));
@@ -210,30 +229,24 @@ int main(int argc, char *argv[]) {
 
     distanceMatrix = calculateDistanceMatrix(coordinates, numOfCoords, distanceMatrix);
 
-
     double shortestTour = DBL_MAX;
 
     int *finalTour =  (int *)malloc((numOfCoords+1) * sizeof(int *));
 
     for(i = 0; i< numOfCoords; i++)
     {
-        int *tempTour = (int *)malloc(numOfCoords * sizeof(int *));
 
-        tempTour = cheapestInsertion(distanceMatrix, numOfCoords, outputfile, i);
-        int currentTour = tempTour[numOfCoords+1];
+        struct TourData tempTour = cheapestInsertion(distanceMatrix, numOfCoords, outputfile, i);
+        int currentTour = tempTour.tourSize;
 
         if(currentTour < shortestTour)
         {
             shortestTour = currentTour;
-            int j=0;
-            for(j = 0; j <numOfCoords+1; j++)
-            {
-                finalTour[j] = tempTour[j];
-            }
+            writeTourToFile(tempTour.tour, numOfCoords+1, outputfile);
+
         }
     }
 
-    writeTourToFile(finalTour, numOfCoords+1, outputfile);
 
 
 
@@ -253,7 +266,7 @@ int main(int argc, char *argv[]) {
         free(distanceMatrix[i]);
     }
     free(distanceMatrix);
-
+    cleanupStruct(&tourData);
     return 0;
 }
 
