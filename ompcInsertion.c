@@ -245,7 +245,7 @@ int main(int argc, char *argv[]) {
 
     double shortestTour = DBL_MAX;
 
-    int *finalTour =  (int *)malloc((numOfCoords+1) * sizeof(int *));
+    int *shortestTour =  (int *)malloc((numOfCoords+1) * sizeof(int *));
 
     for(i = 0; i< numOfCoords; i++)
     {
@@ -256,8 +256,14 @@ int main(int argc, char *argv[]) {
         {
             printf("\n");
             printf("Found tour shorter than current tour");
-            shortestTour = currentTour;
-            writeTourToFile(tempTour.tour, numOfCoords+1, outputfile);
+
+            //make copy
+            int j =0;
+            for(j =0; j <numOfCoords+1; j++)
+            {
+                shortestTour[j] = tempTour.tour[j];
+            }
+
 
         }
 
@@ -275,7 +281,11 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    printf("Writing the shortest tour to file\n: ");
 
+    printf("Starting with %d: ", shortestTour[0]);
+
+    writeTourToFile(shortestTour, numOfCoords+1, outputfile);
 
 
     end = omp_get_wtime();
