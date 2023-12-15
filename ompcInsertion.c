@@ -14,10 +14,10 @@
 
 struct TourData {
     int* tour;
-    int tourSize;
+    double tourSize;
 };
 
-void initializeStruct(struct TourData* myStruct, int size) {
+void initializeStruct(struct TourData* myStruct, double size) {
     myStruct->tour = (int*)malloc(size * sizeof(int));
     myStruct->tourSize = size;
 }
@@ -190,8 +190,15 @@ struct TourData cheapestInsertion(double **distanceMatrix, int numOfCoords, char
 //    double tourLength = visitedCount+1;
 //    writeTourToFile(tour, tourLength, outputFileName);
 
-    tour[numOfCoords+1] = totalLength;
-    return tour;
+    struct TourData tourData;
+
+    initializeStruct(&tourData, numOfCoords+1);
+
+    tourData.tour = tour;
+    tourData.tourSize =totalLength;
+
+//    tour[numOfCoords+1] = totalLength;
+    return tourData;
 }
 
 
