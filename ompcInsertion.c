@@ -254,6 +254,7 @@ int main(int argc, char *argv[]) {
 
         if(currentTour < shortestTour)
         {
+            shortestTour = currentTour;
             printf("\n");
             printf("Found tour shorter than current tour");
 
