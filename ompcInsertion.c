@@ -105,7 +105,7 @@ struct TourData cheapestInsertion(double **distanceMatrix, int numOfCoords, char
     tour[1]= nearestVertex;
     visited[nearestVertex] = true;
     visitedCount++; // 2
-    tour[2] = 0;
+    tour[2] = startingNode;
 
     double *minimumAdditionalCosts = (double*)malloc(noOfThreads*sizeof(double));
     int *positions = (int*)malloc(noOfThreads*sizeof(int));
