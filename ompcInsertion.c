@@ -190,11 +190,18 @@ struct TourData cheapestInsertion(double **distanceMatrix, int numOfCoords, char
 //    double tourLength = visitedCount+1;
 //    writeTourToFile(tour, tourLength, outputFileName);
 
+
     struct TourData tourData;
 
     initializeStruct(&tourData, numOfCoords+1);
 
-    tourData.tour = tour;
+    int count =0;
+    for(count =0; count< numOfCoords+1; count++)
+    {
+        tourData.tour[count] = tour[count];
+    }
+
+//    tourData.tour = tour;
     tourData.tourSize =totalLength;
 
 //    tour[numOfCoords+1] = totalLength;
@@ -242,15 +249,29 @@ int main(int argc, char *argv[]) {
 
     for(i = 0; i< numOfCoords; i++)
     {
-
         struct TourData tempTour = cheapestInsertion(distanceMatrix, numOfCoords, outputfile, i);
         int currentTour = tempTour.tourSize;
 
         if(currentTour < shortestTour)
         {
+            printf("\n");
+            printf("Found tour shorter than current tour");
             shortestTour = currentTour;
             writeTourToFile(tempTour.tour, numOfCoords+1, outputfile);
 
+        }
+
+        else
+        {
+            printf("Current tour size:");
+            printf("%f", tempTour.tourSize);
+            printf("\n");
+
+            printf("Shortes tour size:");
+            printf("%f", shortestTour);
+            printf("\n");
+            printf("Found tour longer than current tour");
+            printf("");
         }
     }
 
