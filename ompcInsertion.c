@@ -211,20 +211,22 @@ int main(int argc, char *argv[]) {
     distanceMatrix = calculateDistanceMatrix(coordinates, numOfCoords, distanceMatrix);
 
 
-    int startingNode = 0;
     double shortestTour = DBL_MAX;
 
-    int *tempTour = (int *)malloc(numOfCoords * sizeof(int *));
     int *finalTour =  (int *)malloc((numOfCoords+1) * sizeof(int *));
 
     for(i = 0; i< numOfCoords; i++)
     {
+        int *tempTour = (int *)malloc(numOfCoords * sizeof(int *));
+
         tempTour = cheapestInsertion(distanceMatrix, numOfCoords, outputfile, i);
-        if(tempTour[numOfCoords+1] < shortestTour)
+        var currentTour = tempTour[numOfCoords+1];
+
+        if(currentTour < shortestTour)
         {
-            shortestTour = tempTour[numOfCoords+1];
+            shortestTour = currentTour;
             int j=0;
-            for(j = 0; j<numOfCoords+1; j++)
+            for(j = 0; j< numOfCoords+1; j++)
             {
                 finalTour[j] = tempTour[j];
             }
