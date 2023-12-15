@@ -149,8 +149,6 @@ struct TourData cheapestInsertion(double **distanceMatrix, int numOfCoords, char
                 }
             }
 
-
-
         int x=0;
         for(x =0; x< noOfThreads; x++)
         {
@@ -187,10 +185,6 @@ struct TourData cheapestInsertion(double **distanceMatrix, int numOfCoords, char
     }
     printf("%f", totalLength);
 
-//    double tourLength = visitedCount+1;
-//    writeTourToFile(tour, tourLength, outputFileName);
-
-
     struct TourData tourData;
 
     initializeStruct(&tourData, numOfCoords+1);
@@ -201,10 +195,8 @@ struct TourData cheapestInsertion(double **distanceMatrix, int numOfCoords, char
         tourData.tour[count] = tour[count];
     }
 
-//    tourData.tour = tour;
     tourData.tourSize =totalLength;
 
-//    tour[numOfCoords+1] = totalLength;
     return tourData;
 }
 
@@ -214,8 +206,6 @@ int main(int argc, char *argv[]) {
     // Taking default file names if user didn't provide input
     char *fileName = "16_coords.coord";
     char *outputfile = "output.txt";
-
-    struct TourData tourData;
 
     if (argc > 1) {
         fileName = argv[1];
@@ -228,8 +218,6 @@ int main(int argc, char *argv[]) {
     start = omp_get_wtime();;
 
     int numOfCoords = readNumOfCoords(fileName);
-
-    initializeStruct(&tourData, numOfCoords+1);
 
     double **coordinates = readCoords(fileName, numOfCoords);
 
@@ -258,6 +246,7 @@ int main(int argc, char *argv[]) {
             printf("\n");
             printf("Found tour shorter than current tour");
 
+            printf("shortest tour now starting with %d", tempTour.tour[0]);
             //make copy
             int j =0;
             for(j =0; j <numOfCoords+1; j++)
@@ -302,7 +291,7 @@ int main(int argc, char *argv[]) {
         free(distanceMatrix[i]);
     }
     free(distanceMatrix);
-    cleanupStruct(&tourData);
+    cleanupStruct(&tempTour);
     return 0;
 }
 
