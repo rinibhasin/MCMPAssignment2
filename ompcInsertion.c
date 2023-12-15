@@ -92,9 +92,10 @@ struct TourData cheapestInsertion(double **distanceMatrix, int numOfCoords, char
 
     int noOfThreads = omp_get_max_threads();
 
-    for(i = 1 ; i <numOfCoords; i++)
+    for(i = 0 ; i <numOfCoords; i++)
     {
-        if(distanceMatrix[0][i]< minimumDistance)
+
+        if(i != startingNode && distanceMatrix[0][i]< minimumDistance)
         {
             minimumDistance = distanceMatrix[0][i];
             nearestVertex = i;
