@@ -229,9 +229,10 @@ int main(int argc, char *argv[]) {
                 finalTour[j] = tempTour[j];
             }
         }
-
-        writeTourToFile(finalTour, numOfCoords+1, outputfile);
     }
+
+    writeTourToFile(finalTour, numOfCoords+1, outputfile);
+
 
 
     end = omp_get_wtime();
