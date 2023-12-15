@@ -220,13 +220,13 @@ int main(int argc, char *argv[]) {
         int *tempTour = (int *)malloc(numOfCoords * sizeof(int *));
 
         tempTour = cheapestInsertion(distanceMatrix, numOfCoords, outputfile, i);
-        var currentTour = tempTour[numOfCoords+1];
+        int currentTour = tempTour[numOfCoords+1];
 
         if(currentTour < shortestTour)
         {
             shortestTour = currentTour;
             int j=0;
-            for(j = 0; j< numOfCoords+1; j++)
+            for(j = 0; j <numOfCoords+1; j++)
             {
                 finalTour[j] = tempTour[j];
             }
