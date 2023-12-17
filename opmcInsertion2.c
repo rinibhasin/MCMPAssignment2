@@ -88,9 +88,9 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords, char *outputFil
 
         for(i = 0; i <numOfCoords; i++)
         {
-            if(visited[i] == false && distanceMatrix[0][i]< minimumDistance)
+            if(visited[i] == false && distanceMatrix[startingNode][i]< minimumDistance)
             {
-                minimumDistance = distanceMatrix[0][i];
+                minimumDistance = distanceMatrix[startingNode][i];
                 nearestVertex = i;
             }
         }
