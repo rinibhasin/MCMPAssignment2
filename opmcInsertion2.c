@@ -54,6 +54,8 @@ double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double *
 void cheapestInsertion(double **distanceMatrix, int numOfCoords, char *outputFileName)
 {
     double shortestTour = DBL_MAX;
+    int *shortestTourArray =  (int *)malloc((numOfCoords+1) * sizeof(int *));
+
     for(int top = 0; top<numOfCoords; top++)
     {
         int startingNode = top;
@@ -177,11 +179,37 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords, char *outputFil
 
         if(totalLength < shortestTour)
         {
+
+            printf("Found tour shorter than current tour");
+            printf("shortest tour now starting with %d", tour[0]);
+
             shortestTour = totalLength;
             double tourLength = visitedCount+1;
-            writeTourToFile(tour, tourLength, outputFileName);
+
+            //make copy
+            int copy =0;
+            for(copy =0; copy <numOfCoords+1; copy++)
+            {
+                shortestTourArray[copy] = tour[copy];
+            }
+        }
+
+        else
+        {
+            printf("Current tour size:");
+            printf("%f", totalLength);
+            printf("\n");
+
+            printf("Shortes tour size:");
+            printf("%f", shortestTour);
+            printf("\n");
+            printf("Found tour longer than current tour");
+            printf("");
         }
     }
+
+
+    writeTourToFile(shortestTourArray, numOfCoords+1, outputFileName);
 
 
 
