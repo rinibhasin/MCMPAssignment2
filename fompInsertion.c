@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
 
     // taking default file names if user didn't provide input
     char *fileName = "9_coords.coord";
-    char *fileName = "output.txt";
+    char *outputfile = "output.txt";
 
     if (argc > 1) {
         fileName = argv[1];
@@ -29,9 +29,6 @@ int main(int argc, char *argv[]) {
     double start, end;
     double cpu_time_used;
 
-    // Extract the two command-line arguments
-    char *coordinatefile = argv[1];
-    char *outputfile = argv[2];
 
     // Read the coordinates and number of coordinates from .coord file
     int numOfCoords = readNumOfCoords(fileName);
@@ -50,8 +47,8 @@ int main(int argc, char *argv[]) {
     // Calculate the Distance matrix
     distanceMatrix = calculateDistanceMatrix(coordinates, numOfCoords, distanceMatrix);
 
-    // Call the farthestInsertionTSP function to find the tour
     farthestInsertion(distanceMatrix, numOfCoords, outputfile);
+
     end = omp_get_wtime();
 
     cpu_time_used = end - start;
@@ -118,9 +115,9 @@ void farthestInsertion(double **distances, int numOfCoords, char *outputfileName
 
 
     int maxThreads = omp_get_max_threads();
-    double *farthestDistances = (double*)malloc(noOfThreads*sizeof(double));
-    int *positions = (int*)malloc(noOfThreads*sizeof(int));
-    int *farthestNodes = (int*)malloc(noOfThreads*sizeof(int));
+    double *farthestDistances = (double*)malloc(maxThreads*sizeof(double));
+    int *positions = (int*)malloc(maxThreads*sizeof(int));
+    int *farthestNodes = (int*)malloc(maxThreads*sizeof(int));
     double minimumDistance = DBL_MAX;
 
 
@@ -131,18 +128,18 @@ void farthestInsertion(double **distances, int numOfCoords, char *outputfileName
         int j, x;
         int threadID;
 
-        for(x = 0; x < noOfThreads; x++)
+        for(x = 0; x < maxThreads; x++)
         {
             farthestDistances[x] = 0.0;
             positions[x] =0;
             farthestNodes[x]=0;
         }
 
-#pragma omp parallel for collapse(2) private(i,p, thread_ID) shared(visited_nodes, distances, minimumAdditionalCosts, positions,nodes)
+#pragma omp parallel for collapse(2) private(i,p, threadID) shared(visited_nodes, distances, minimumAdditionalCosts, positions,nodes)
         for (i = 0; i < visitedCount; i++) {
 
             for (j = 0; j < numOfCoords; j++) {
-                thread_ID  = omp_get_thread_num();
+                threadID  = omp_get_thread_num();
                 if (!visited[j]) {
 
                     double currentDistance = distanceMatrix[j][tour[i]];
@@ -197,12 +194,11 @@ void farthestInsertion(double **distances, int numOfCoords, char *outputfileName
 
     }
 // print the final tour
-    for (i = 0; i <= currentSize; i++) {
+    for (i = 0; i <= visitedCount; i++) {
         printf("%d \t", tour[i]);
     }
-    int tourLength = i;
 
     int tourLength = visitedCount+1;
-    writeTourToFile(tour, tourLength, outputfile);
+    writeTourToFile(tour, tourLength, outputfileName);
 
 }
