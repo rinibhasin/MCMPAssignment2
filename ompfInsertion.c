@@ -221,6 +221,7 @@ struct TourData farthestInsertion(double **dMatrix, int numOfCoords, int top){
 	}
 
     double totalLength = 0;
+    int i =0;
     for (i = 0; i <=numOfCoords; i++) {
         printf("%d ", tour[i]);
         if(i>0) {
