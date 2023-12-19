@@ -64,7 +64,7 @@ int main(int argc, char *argv[]){
         {
             printf("Shortest tour: %f\n", shortestTour);
             printf("Current Tour: %f\n", currentTour);
-            currentTour = shortestTour;
+            shortestTour = currentTour;
 
             printf("Found tour shorter than current tour");
             printf("\n");
