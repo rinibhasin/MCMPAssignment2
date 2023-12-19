@@ -4,7 +4,7 @@
 #include<string.h>
 #include<stdbool.h>
 
-/*This code is for reading and writing to files for the 2023-24 COMP528 CA1*/
+/*This code is for reading and writing to files for the 2023-24 COMP528 CA2*/
 
 /*Use the functions in this file to read from the input file, and write to the output file*/
 
@@ -31,7 +31,9 @@ int readNumOfCoords(char *filename){
 	while(fgets(line, sizeof(line), file) != NULL){
 		numOfCoords++;
 	}
-	
+
+	fclose(file);
+
     return numOfCoords;
 }
 
@@ -66,6 +68,8 @@ double **readCoords(char *filename, int numOfCoords){
 		}
 	}
 
+	fclose(file);
+
 	return coords;
 }
 
@@ -86,6 +90,7 @@ void *writeTourToFile(int *tour, int tourLength, char *filename){
         fprintf(file, "%d ", tour[i]);
     }
 
-	
+	fclose(file);
 
+	return tour;
 }
