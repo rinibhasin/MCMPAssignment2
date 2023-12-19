@@ -63,11 +63,27 @@ int main(int argc, char *argv[]){
         if(currentTour < shortestTour)
         {
             currentTour = shortestTour;
+
+            printf("Found tour shorter than current tour");
+
+            printf("shortest tour now starting with %d", tempTour.tour[0]);
             int copy =0;
             for(copy =0; copy <numOfCoords+1; copy++)
             {
+
                 shortestTourArray[copy] = tempTour.tour[copy];
             }
+        }
+        else{
+            printf("Current tour size:");
+            printf("%f", tempTour.tourSize);
+            printf("\n");
+
+            printf("Shortest tour size:");
+            printf("%f", shortestTour);
+            printf("\n");
+            printf("Found tour longer than current tour");
+            printf("");
         }
 
     }
@@ -247,7 +263,7 @@ struct TourData farthestInsertion(double **dMatrix, int numOfCoords, int top){
         tourData.tour[count] = tour[count];
     }
 
-    tourData.tourSize =totalLength;
+    tourData.tourSize = totalLength;
 
 	return tourData;
 }
