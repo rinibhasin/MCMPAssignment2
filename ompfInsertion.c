@@ -65,7 +65,7 @@ int main(int argc, char *argv[]){
             currentTour = shortestTour;
 
             printf("Found tour shorter than current tour");
-
+            printf("\n");
             printf("shortest tour now starting with %d", tempTour.tour[0]);
             int copy =0;
             for(copy =0; copy <numOfCoords+1; copy++)
@@ -75,6 +75,7 @@ int main(int argc, char *argv[]){
             }
         }
         else{
+            printf("\n");
             printf("Current tour size:");
             printf("%f", tempTour.tourSize);
             printf("\n");
@@ -83,7 +84,7 @@ int main(int argc, char *argv[]){
             printf("%f", shortestTour);
             printf("\n");
             printf("Found tour longer than current tour");
-            printf("");
+            printf("\n");
         }
 
     }
