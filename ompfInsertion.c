@@ -11,7 +11,7 @@ double **readCoords(char *filename, int numOfCoords);
 void *writeTourToFile(int *tour, int tourLength, char *filename);
 double **createDistanceMatrix(double **coords, int numOfCoords);
 double sqrt(double arg);
-struct TourData farthestInsertion(double **dMatrix, int numOfCoords);
+struct TourData farthestInsertion(double **dMatrix, int numOfCoords, int top);
 
 struct TourData {
     int* tour;
@@ -62,11 +62,11 @@ int main(int argc, char *argv[]){
 
         if(currentTour < shortestTour)
         {
-            currentTour = shortestTour
+            currentTour = shortestTour;
             int copy =0;
             for(copy =0; copy <numOfCoords+1; copy++)
             {
-                shortestTourArray[copy] = tour[copy];
+                shortestTourArray[copy] = tempTour.tour[copy];
             }
         }
 
