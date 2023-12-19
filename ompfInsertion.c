@@ -4,13 +4,14 @@
 #include<stdbool.h>
 #include<math.h>
 #include<omp.h>
+#include <float.h>
 
 int readNumOfCoords(char *filename);
 double **readCoords(char *filename, int numOfCoords);
 void *writeTourToFile(int *tour, int tourLength, char *filename);
 double **createDistanceMatrix(double **coords, int numOfCoords);
 double sqrt(double arg);
-int *farthestInsertion(double **dMatrix, int numOfCoords);
+struct TourData farthestInsertion(double **dMatrix, int numOfCoords);
 
 struct TourData {
     int* tour;
@@ -56,7 +57,7 @@ int main(int argc, char *argv[]){
 
     for(int top = 0; top<numOfCoords; top++) {
 
-        struct TourData tempTour =  = farthestInsertion(distances, numOfCoords);
+        struct TourData tempTour  = farthestInsertion(distances, numOfCoords, top);
         int currentTour = tempTour.tourSize;
 
         if(currentTour < shortestTour)
@@ -90,7 +91,7 @@ int main(int argc, char *argv[]){
 //	free(tour);
 }
 
-struct TourData farthestInsertion(double **dMatrix, int numOfCoords){
+struct TourData farthestInsertion(double **dMatrix, int numOfCoords, int top){
 	//Setting up variables
 	int nextNode, insertPos;
 
@@ -105,9 +106,9 @@ struct TourData farthestInsertion(double **dMatrix, int numOfCoords){
 	}
 
 	//Tour always starts with 0. 0 is visited
-	tour[0] = 0;
-	tour[1] = 0;
-	visited[0] = true;
+	tour[0] = top;
+	tour[1] = top;
+	visited[top] = true;
 	
 	//Hard coding because I'm lazy
 	int numVisited = 1;
