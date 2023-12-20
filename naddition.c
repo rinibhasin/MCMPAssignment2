@@ -68,6 +68,9 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
         // Initialize variables for finding the next vertex to add
         double minAdditionCost = DBL_MAX;
         int nearestTourCityIndex, positionToAdd;
+        double minimum_Cost = DBL_MAX;
+        int min_position;
+        int min_Unvisited_node;
         int i = 0, y=0;
         double max = DBL_MAX;
         int thread_ID;
@@ -81,7 +84,7 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
             nodes[y] = 0;
         }
 
-        int n,k, thread_ID=0;
+        int n,k=0;
 #pragma omp parallel for collapse(2) private(n, k, thread_ID) shared(visited_nodes, distances, threads_min_distance, positions, nodes)
         for (n = 0; n < currentSize; n++) {
             // Step 4 - Find a vertex vk such that dist(vn, vk) is minimal
