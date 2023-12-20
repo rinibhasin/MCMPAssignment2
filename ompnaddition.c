@@ -231,10 +231,9 @@ int main(int argc, char *argv[]) {
     distanceMatrix = calculateDistanceMatrix(coordinates, numOfCoords, distanceMatrix);
 
     double shortestTour = DBL_MAX;
-
     int *shortestTourArray =  (int *)malloc((numOfCoords+1) * sizeof(int *));
 
-    for(i = 0; i< 512; i++)
+    for(i = 0; i< numOfCoords; i++)
     {
         struct TourData tempTour = nearestAddition(distanceMatrix, numOfCoords, outputfile, i);
         int currentTour = tempTour.tourSize;
