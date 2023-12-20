@@ -49,8 +49,8 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
     int p =0;
     for(p =0; p< numOfCoords; p++)
     {
-     tour[p] = 0;
-     visited[p] = false;
+        tour[p] = 0;
+        visited[p] = false;
     }
 
     tour[numOfCoords] = 0;
@@ -103,7 +103,7 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
             nearestNodes[y] = 0;
         }
         int i=0, j=0;
-        #pragma omp parallel for collapse(2) private(i, j, threadID) shared(visited, distances, minimumAdditionalCosts, positions, nearestNodes)
+#pragma omp parallel for collapse(2) private(i, j, threadID) shared(visited, distances, minimumAdditionalCosts, positions, nearestNodes)
         for ( i = 0; i < visitedCount; i++) {
             for ( j = 0; j < numOfCoords; j++) {
                 threadID = omp_get_thread_num();
