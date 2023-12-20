@@ -22,7 +22,6 @@ struct TourData {
 };
 
 
-
 double calculateDistance(double x1, double y1, double x2, double y2) {
     // Calculate the Euclidean distance between two points.
     return sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
@@ -37,7 +36,7 @@ double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double *
     double y2 =0;
     double distance = 0;
 
-#pragma omp parallel for collapse(2) private(i, j, x1, y1, x2, y2, distance) shared(numOfCoords)
+//#pragma omp parallel for collapse(2) private(i, j, x1, y1, x2, y2, distance) shared(numOfCoords)
     for (i = 0; i < numOfCoords; i++) {
         for (j = 0; j < numOfCoords; j++) {
 
@@ -195,7 +194,7 @@ struct TourData nearestAddition(double **distances, int numOfCoords, char *outpu
 // Add the distance from the last vertex back to the starting vertex
     cost += distances[tour[numOfCoords - 1]][tour[0]];
 
-//    tour[numOfCoords + 1] = cost;
+    tour[numOfCoords + 1] = cost;
     result.tourSize = cost;
 
 // Return the tour
