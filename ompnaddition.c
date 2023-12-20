@@ -1,10 +1,19 @@
+#include <stdio.h>
 #include <float.h>
 #include <stdlib.h>
-#include <stdbool.h>
-#include <omp.h>
+#include <time.h>
 #include <stdio.h>
+#include <float.h>
+#include <stdlib.h>
+#include <time.h>
+#include<math.h>
+#include<stdbool.h>
+#include <omp.h>
+#include <stdlib.h>
 
-
+int readNumOfCoords(char *fileName);
+double **readCoords(char *filename, int numOfCoords);
+void *writeTourToFile(int *tour, int tourLength, char *filename);
 struct TourData {
     int *tour;
     double tourSize;
@@ -152,7 +161,7 @@ struct TourData nearestAddition(double **distanceMatrix, int numOfCoords, char *
     cost += distanceMatrix[tour[numOfCoords - 1]][tour[0]];
 
     tour[numOfCoords + 1] = cost;
-    result.tourcost = cost;
+    result.tourSize = cost;
 
 // Return the tour
     return result;
