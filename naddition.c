@@ -126,20 +126,20 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
                 distances[tour[min_position]][tour[indexBefore]];
 
         if (distanceAfter < distanceBefore) {
-            positionToAdd = indexAfter;
+            min_position = indexAfter;
         }
         else {
-            positionToAdd = indexBefore + 1;
+            min_position = indexBefore + 1;
         }
 
 
         currentSize++;
         visited_nodes[min_Unvisited_node] = true;
 
-        for (i = currentSize; i > positionToAdd; i--) {
+        for (i = currentSize; i > min_position; i--) {
             tour[i] = tour[i - 1];
         }
-        tour[positionToAdd] = min_Unvisited_node;
+        tour[min_position] = min_Unvisited_node;
 
     }
 
