@@ -41,33 +41,40 @@ double **createDistanceMatrix(double **coords, int numOfCoords){
 
 
 // Function to solve the TSP using Nearest addition method
-struct InsertionResult nearestAddition_TSP(double **distances, int numOfCoords, int starting_coord) {
+struct InsertionResult nearestAddition_TSP(double **distances, int numOfCoords, int startingNode) {
 
-    int currentSize = 1;
+    int visited = 1;
     int *tour = malloc((numOfCoords + 1) * sizeof(int));
-    bool *visited_nodes = malloc(numOfCoords * sizeof(bool));
+    bool *visited = malloc(numOfCoords * sizeof(bool));
+
+    int p =0;
+    for(p =0; p< numOfCoords; p++)
+    {
+     tour[p] = 0;
+     visited[p] = false;
+    }
+
+    tour[numOfCoords] = 0;
+
     int nearest;
     struct InsertionResult result;
     result.tour = malloc((numOfCoords + 1) * sizeof(int));
 
-    /* Get the number of Threads */
     int noOfThreads = omp_get_max_threads();
-    /* Set up arrays to reserve memory locations for the threads using malloc
-     * Arrays are equal to the noOfThreads allocated for them
-     */
+
     double *threads_min_distance = (double *) malloc(noOfThreads * sizeof(double));
     int *positions = (int *) malloc(noOfThreads * sizeof(int));
     int *nodes = (int *) malloc(noOfThreads * sizeof(int));
 
     // Step 1 - Start off with a vertex V0
-    tour[0] = starting_coord;
-    visited_nodes[starting_coord] = true;
-    int currentCity = starting_coord;
+    tour[0] = startingNode;
+    visited[startingNode] = true;
+    int currentCity = startingNode;
     double minDistance = DBL_MAX;
 
     // Step 2 - Find a vertex Vi such that dist(V0, Vi) is minimal
     for (int i = 0; i < numOfCoords; i++) {
-        if (!visited_nodes[i]) {
+        if (!visited[i]) {
             if (distances[currentCity][i] < minDistance) {
                 minDistance = distances[currentCity][i];
                 nearest = i;
@@ -77,13 +84,13 @@ struct InsertionResult nearestAddition_TSP(double **distances, int numOfCoords, 
 
     // Add Vi to the tour
     tour[1] = nearest;
-    visited_nodes[nearest] = true;
-    currentSize++;
+    visited[nearest] = true;
+    visited++;
 
-    tour[currentSize] = starting_coord;
-//    currentSize++;
+    tour[visited] = startingNode;
+//    visited++;
 // Iterate through the rest of the nodes/coords
-    while (currentSize < numOfCoords) {
+    while (visited < numOfCoords) {
         // Initialize variables for finding the next vertex to add
         double minAdditionCost = DBL_MAX;
         double minimum_Cost = DBL_MAX;
@@ -102,11 +109,11 @@ struct InsertionResult nearestAddition_TSP(double **distances, int numOfCoords, 
         }
         int n=0, k=0;
         // Step 3 - For all vertices vn in the partial tour
-#pragma omp parallel for collapse(2) private(n, k, thread_ID) shared(visited_nodes, distances, threads_min_distance, positions, nodes)
-        for ( n = 0; n < currentSize; n++) {
+#pragma omp parallel for collapse(2) private(n, k, thread_ID) shared(visited, distances, threads_min_distance, positions, nodes)
+        for ( n = 0; n < visited; n++) {
             for ( k = 0; k < numOfCoords; k++) {
                 thread_ID = omp_get_thread_num();
-                if (!visited_nodes[k]) {
+                if (!visited[k]) {
 
                     double additionalCost = distances[tour[n]][k];
                     if (additionalCost < threads_min_distance[thread_ID]) {
@@ -131,7 +138,7 @@ struct InsertionResult nearestAddition_TSP(double **distances, int numOfCoords, 
             }
         }
 
-        int indexBefore = min_position == 0 ? currentSize - 1 : min_position - 1;
+        int indexBefore = min_position == 0 ? visited - 1 : min_position - 1;
         int indexAfter = min_position + 1;
 
         double distanceAfter =
@@ -147,10 +154,10 @@ struct InsertionResult nearestAddition_TSP(double **distances, int numOfCoords, 
             min_position = indexBefore + 1;
         }
 
-        currentSize++;
-        visited_nodes[min_Unvisited_node] = true;
+        visited++;
+        visited[min_Unvisited_node] = true;
 
-        for (i = currentSize; i > min_position; i--) {
+        for (i = visited; i > min_position; i--) {
             tour[i] = tour[i - 1];
         }
         tour[min_position] = min_Unvisited_node;
