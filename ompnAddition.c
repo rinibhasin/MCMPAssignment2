@@ -174,13 +174,26 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
     double totalLength = 0;
     int i =0;
     for (i = 0; i <=numOfCoords; i++) {
-        printf("%d ", tour[i]);
         if(i>0) {
             totalLength += distances[tour[i]][tour[i - 1]];
         }
     }
 
-    result.tourSize = totalLength;
+    double cost = 0.0;
+    for (int i = 0; i < numOfCoords - 1; i++) {
+        int fromVertex = tour[i];
+        int toVertex = tour[i + 1];
+
+        cost += distances[fromVertex][toVertex];
+
+    }
+
+    cost += distances[tour[numOfCoords - 1]][tour[0]];
+
+    tour[numOfCoords + 1] = cost;
+    result.tourSize = cost;
+
+//    result.tourSize = totalLength;
 
     return result;
 }
