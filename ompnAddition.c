@@ -42,7 +42,7 @@ double **createDistanceMatrix(double **coords, int numOfCoords){
 
 struct TourData nearestAddition(double **distances, int numOfCoords, int startingNode) {
 
-    int visitedCount = 1;
+    int visitedCount = 0;
     int *tour = malloc((numOfCoords + 1) * sizeof(int));
     bool *visited = malloc(numOfCoords * sizeof(bool));
 
@@ -67,13 +67,14 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
 
     tour[0] = startingNode;
     visited[startingNode] = true;
-    int currentCity = startingNode;
+    visitedCount++;
+
     double minimumDistance = DBL_MAX;
 
     for (int i = 0; i < numOfCoords; i++) {
         if (!visited[i]) {
-            if (distances[currentCity][i] < minimumDistance) {
-                minimumDistance = distances[currentCity][i];
+            if (distances[startingNode][i] < minimumDistance) {
+                minimumDistance = distances[startingNode][i];
                 nearest = i;
             }
         }
@@ -83,7 +84,7 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
     visited[nearest] = true;
     visitedCount++;
 
-    tour[visitedCount] = startingNode;
+    tour[2] = startingNode;
 
     while (visitedCount < numOfCoords)
     {
