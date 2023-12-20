@@ -226,7 +226,7 @@ int main(int argc, char *argv[]) {
     double **distanceMatrix = (double **)malloc(numOfCoords * sizeof(double *));
 
     int i = 0;
-#pragma omp parallel for private(i)
+//#pragma omp parallel for private(i)
     for (i = 0; i < numOfCoords; i++) {
         distanceMatrix[i] = (double *)malloc(numOfCoords * sizeof(double));
     }
