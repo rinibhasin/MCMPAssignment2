@@ -43,7 +43,7 @@ double **createDistanceMatrix(double **coords, int numOfCoords){
 // Function to solve the TSP using Nearest addition method
 struct InsertionResult nearestAddition_TSP(double **distances, int numOfCoords, int startingNode) {
 
-    int visited = 1;
+    int visitedCount = 1;
     int *tour = malloc((numOfCoords + 1) * sizeof(int));
     bool *visited = malloc(numOfCoords * sizeof(bool));
 
@@ -85,12 +85,12 @@ struct InsertionResult nearestAddition_TSP(double **distances, int numOfCoords, 
     // Add Vi to the tour
     tour[1] = nearest;
     visited[nearest] = true;
-    visited++;
+    visitedCount++;
 
-    tour[visited] = startingNode;
-//    visited++;
+    tour[visitedCount] = startingNode;
+//    visitedCount++;
 // Iterate through the rest of the nodes/coords
-    while (visited < numOfCoords) {
+    while (visitedCount < numOfCoords) {
         // Initialize variables for finding the next vertex to add
         double minAdditionCost = DBL_MAX;
         double minimum_Cost = DBL_MAX;
@@ -110,7 +110,7 @@ struct InsertionResult nearestAddition_TSP(double **distances, int numOfCoords, 
         int n=0, k=0;
         // Step 3 - For all vertices vn in the partial tour
 #pragma omp parallel for collapse(2) private(n, k, thread_ID) shared(visited, distances, threads_min_distance, positions, nodes)
-        for ( n = 0; n < visited; n++) {
+        for ( n = 0; n < visitedCount; n++) {
             for ( k = 0; k < numOfCoords; k++) {
                 thread_ID = omp_get_thread_num();
                 if (!visited[k]) {
@@ -138,7 +138,7 @@ struct InsertionResult nearestAddition_TSP(double **distances, int numOfCoords, 
             }
         }
 
-        int indexBefore = min_position == 0 ? visited - 1 : min_position - 1;
+        int indexBefore = min_position == 0 ? visitedCount - 1 : min_position - 1;
         int indexAfter = min_position + 1;
 
         double distanceAfter =
@@ -154,10 +154,10 @@ struct InsertionResult nearestAddition_TSP(double **distances, int numOfCoords, 
             min_position = indexBefore + 1;
         }
 
-        visited++;
+        visitedCount++;
         visited[min_Unvisited_node] = true;
 
-        for (i = visited; i > min_position; i--) {
+        for (i = visitedCount; i > min_position; i--) {
             tour[i] = tour[i - 1];
         }
         tour[min_position] = min_Unvisited_node;
