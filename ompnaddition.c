@@ -152,15 +152,15 @@ struct TourData nearestAddition(double **distanceMatrix, int numOfCoords, char *
         int toVertex = tour[i + 1];
 
         // Accumulate the distance between consecutive vertices
-        cost += distanceMatrix[fromVertex][toVertex];
+        tourCost += distanceMatrix[fromVertex][toVertex];
 
     }
 
 // Add the distance from the last vertex back to the starting vertex
-    cost += distanceMatrix[tour[numOfCoords - 1]][tour[0]];
+    tourCost += distanceMatrix[tour[numOfCoords - 1]][tour[0]];
 
-    tour[numOfCoords + 1] = cost;
-    result.tourSize = cost;
+//    tour[numOfCoords + 1] = tourCost;
+    result.tourSize = tourCost;
 
 // Return the tour
     return result;
