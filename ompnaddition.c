@@ -14,6 +14,7 @@
 int readNumOfCoords(char *fileName);
 double **readCoords(char *filename, int numOfCoords);
 void *writeTourToFile(int *tour, int tourLength, char *filename);
+
 struct TourData {
     int *tour;
     double tourSize;
@@ -31,11 +32,12 @@ struct TourData nearestAddition(double **distanceMatrix, int numOfCoords, char *
     result.tour = malloc((numOfCoords + 1) * sizeof(int));
 
     int noOfThreads = omp_get_max_threads();
+
+    printf("Number of threads: %d", noOfThreads);
    
     double *minimumAdditionalCosts = (double *) malloc(noOfThreads * sizeof(double));
     int *positions = (int *) malloc(noOfThreads * sizeof(int));
     int *nearestVertexes = (int *) malloc(noOfThreads * sizeof(int));
-
 
     tour[0] = startingNode;
     visited[startingNode] = true;
@@ -81,6 +83,7 @@ struct TourData nearestAddition(double **distanceMatrix, int numOfCoords, char *
             positions[y] = 0;
             nearestVertexes[y] = 0;
         }
+
         int i=0, j=0;
         #pragma omp parallel for collapse(2) private(i, j, threadID) shared(visited, distanceMatrix, minimumAdditionalCosts, positions, nearestVertexes)
         for ( i = 0; i < visitedCount; i++)
@@ -127,8 +130,8 @@ struct TourData nearestAddition(double **distanceMatrix, int numOfCoords, char *
             min_position = indexBefore + 1;
         }
 
-        visitedCount++;
         visited[min_Unvisited_node] = true;
+        visitedCount++;
 
         for (i = visitedCount; i > min_position; i--) {
             tour[i] = tour[i - 1];
