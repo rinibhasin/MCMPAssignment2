@@ -17,8 +17,31 @@ struct InsertionResult {
 };
 
 
+double **createDistanceMatrix(double **coords, int numOfCoords){
+    int i, j;
+
+    double **dMatrix = (double **)malloc(numOfCoords * sizeof(double));
+
+    for(i = 0; i < numOfCoords; i++){
+        dMatrix[i] = (double *)malloc(numOfCoords * sizeof(double));
+    }
+
+#pragma omp parallel for collapse(2)
+    for(i = 0; i < numOfCoords; i++){
+        for(j = 0; j < numOfCoords; j++){
+            double diffX = coords[i][0] - coords[j][0];
+            double diffY = coords[i][1] - coords[j][1];
+            dMatrix[i][j] = sqrt((diffX * diffX) + (diffY * diffY));
+        }
+    }
+
+    return dMatrix;
+}
+
+
+
 // Function to solve the TSP using Nearest addition method
-struct InsertionResult nearestAddition_TSP(double **distances, int numOfCoords, char *outputfile, int starting_coord) {
+struct InsertionResult nearestAddition_TSP(double **distances, int numOfCoords, int starting_coord) {
 
     int currentSize = 1;
     int *tour = malloc((numOfCoords + 1) * sizeof(int));
