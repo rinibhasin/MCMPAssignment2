@@ -241,7 +241,7 @@ int main(int argc, char *argv[]){
         else{
             printf("\n");
             printf("Current tour size:");
-            printf("%f", tempTour.tourSize);
+            printf("%f", tempTour.tourcost);
             printf("\n");
 
             printf("Shortest tour size:");
