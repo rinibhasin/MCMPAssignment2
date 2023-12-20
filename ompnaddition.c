@@ -236,7 +236,7 @@ int main(int argc, char *argv[]) {
 
     for(i = 0; i< 512; i++)
     {
-        struct TourData tempTour = nearestAddition_TSP(distanceMatrix, numOfCoords, outputfile, i);
+        struct TourData tempTour = nearestAddition(distanceMatrix, numOfCoords, outputfile, i);
         int currentTour = tempTour.tourSize;
 
         if(currentTour < shortestTour)
