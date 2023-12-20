@@ -134,12 +134,12 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
 
 
         currentSize++;
-        visited_nodes[nearest] = true;
+        visited_nodes[min_Unvisited_node] = true;
 
         for (i = currentSize; i > positionToAdd; i--) {
             tour[i] = tour[i - 1];
         }
-        tour[positionToAdd] = nearest;
+        tour[positionToAdd] = min_Unvisited_node;
 
     }
 
