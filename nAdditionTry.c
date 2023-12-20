@@ -88,10 +88,9 @@ struct InsertionResult nearestAddition_TSP(double **distances, int numOfCoords, 
     visitedCount++;
 
     tour[visitedCount] = startingNode;
-//    visitedCount++;
-// Iterate through the rest of the nodes/coords
-    while (visitedCount < numOfCoords) {
-        // Initialize variables for finding the next vertex to add
+
+    while (visitedCount < numOfCoords)
+    {
         double minAdditionCost = DBL_MAX;
         double minimum_Cost = DBL_MAX;
         int min_position;
@@ -99,35 +98,31 @@ struct InsertionResult nearestAddition_TSP(double **distances, int numOfCoords, 
         int positionToAdd, position;
         int i = 0, y=0;
         double max = DBL_MAX;
-        int thread_ID;
-//double additionalCost = 0.0;
+        int threadID;
 
         for (y = 0; y < noOfThreads; y++) {
             threads_min_distance[y] = DBL_MAX;
             positions[y] = 0;
             nodes[y] = 0;
         }
-        int n=0, k=0;
-        // Step 3 - For all vertices vn in the partial tour
-#pragma omp parallel for collapse(2) private(n, k, thread_ID) shared(visited, distances, threads_min_distance, positions, nodes)
-        for ( n = 0; n < visitedCount; n++) {
-            for ( k = 0; k < numOfCoords; k++) {
-                thread_ID = omp_get_thread_num();
-                if (!visited[k]) {
+        int i=0, j=0;
+        #pragma omp parallel for collapse(2) private(i, j, threadID) shared(visited, distances, threads_min_distance, positions, nodes)
+        for ( i = 0; i < visitedCount; i++) {
+            for ( j = 0; j < numOfCoords; j++) {
+                threadID = omp_get_thread_num();
+                if (!visited[j]) {
 
-                    double additionalCost = distances[tour[n]][k];
-                    if (additionalCost < threads_min_distance[thread_ID]) {
-                        threads_min_distance[thread_ID] = additionalCost;
-                        positions[thread_ID] = n;
-                        nodes[thread_ID] = k;
+                    double additionalCost = distances[tour[i]][j];
+                    if (additionalCost < threads_min_distance[threadID]) {
+                        threads_min_distance[threadID] = additionalCost;
+                        positions[threadID] = i;
+                        nodes[threadID] = j;
                     }
                 }
             }
         }
-        /*
-      *  Check through each thread's memory location and update the minimumAdditionalCost, position and
-      *  best vertex
-      */
+
+
         int x = 0;
         for (x = 0; x < noOfThreads; x++) {
 
@@ -163,8 +158,6 @@ struct InsertionResult nearestAddition_TSP(double **distances, int numOfCoords, 
         tour[min_position] = min_Unvisited_node;
 
     }
-
-// Add the starting vertex at the end to complete the tour
 
     for (int i = 0; i <= numOfCoords; i++) {
         printf("%d ", tour[i]);
