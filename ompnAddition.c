@@ -11,10 +11,11 @@ int readNumOfCoords(char *fileName);
 double **readCoords(char *filename, int numOfCoords);
 void *writeTourToFile(int *tour, int tourLength, char *filename);
 
-struct InsertionResult {
-    int *tour;
-    double tourcost;
+struct TourData {
+    int* tour;
+    double tourSize;
 };
+
 
 
 double **createDistanceMatrix(double **coords, int numOfCoords){
@@ -39,9 +40,7 @@ double **createDistanceMatrix(double **coords, int numOfCoords){
 }
 
 
-
-// Function to solve the TSP using Nearest addition method
-struct InsertionResult nearestAddition_TSP(double **distances, int numOfCoords, int startingNode) {
+struct TourData nearestAddition(double **distances, int numOfCoords, int startingNode) {
 
     int visitedCount = 1;
     int *tour = malloc((numOfCoords + 1) * sizeof(int));
@@ -57,32 +56,29 @@ struct InsertionResult nearestAddition_TSP(double **distances, int numOfCoords, 
     tour[numOfCoords] = 0;
 
     int nearest;
-    struct InsertionResult result;
+    struct TourData result;
     result.tour = malloc((numOfCoords + 1) * sizeof(int));
 
     int noOfThreads = omp_get_max_threads();
 
-    double *threads_min_distance = (double *) malloc(noOfThreads * sizeof(double));
+    double *minimumAdditionalCosts = (double *) malloc(noOfThreads * sizeof(double));
     int *positions = (int *) malloc(noOfThreads * sizeof(int));
-    int *nodes = (int *) malloc(noOfThreads * sizeof(int));
+    int *nearestNodes = (int *) malloc(noOfThreads * sizeof(int));
 
-    // Step 1 - Start off with a vertex V0
     tour[0] = startingNode;
     visited[startingNode] = true;
     int currentCity = startingNode;
-    double minDistance = DBL_MAX;
+    double minimumDistance = DBL_MAX;
 
-    // Step 2 - Find a vertex Vi such that dist(V0, Vi) is minimal
     for (int i = 0; i < numOfCoords; i++) {
         if (!visited[i]) {
-            if (distances[currentCity][i] < minDistance) {
-                minDistance = distances[currentCity][i];
+            if (distances[currentCity][i] < minimumDistance) {
+                minimumDistance = distances[currentCity][i];
                 nearest = i;
             }
         }
     }
 
-    // Add Vi to the tour
     tour[1] = nearest;
     visited[nearest] = true;
     visitedCount++;
@@ -96,27 +92,27 @@ struct InsertionResult nearestAddition_TSP(double **distances, int numOfCoords, 
         int min_position;
         int min_Unvisited_node;
         int positionToAdd, position;
-        int i = 0, y=0;
+        int y=0;
         double max = DBL_MAX;
         int threadID;
 
         for (y = 0; y < noOfThreads; y++) {
-            threads_min_distance[y] = DBL_MAX;
+            minimumAdditionalCosts[y] = DBL_MAX;
             positions[y] = 0;
-            nodes[y] = 0;
+            nearestNodes[y] = 0;
         }
         int i=0, j=0;
-        #pragma omp parallel for collapse(2) private(i, j, threadID) shared(visited, distances, threads_min_distance, positions, nodes)
+        #pragma omp parallel for collapse(2) private(i, j, threadID) shared(visited, distances, minimumAdditionalCosts, positions, nearestNodes)
         for ( i = 0; i < visitedCount; i++) {
             for ( j = 0; j < numOfCoords; j++) {
                 threadID = omp_get_thread_num();
                 if (!visited[j]) {
 
                     double additionalCost = distances[tour[i]][j];
-                    if (additionalCost < threads_min_distance[threadID]) {
-                        threads_min_distance[threadID] = additionalCost;
+                    if (additionalCost < minimumAdditionalCosts[threadID]) {
+                        minimumAdditionalCosts[threadID] = additionalCost;
                         positions[threadID] = i;
-                        nodes[threadID] = j;
+                        nearestNodes[threadID] = j;
                     }
                 }
             }
@@ -126,10 +122,10 @@ struct InsertionResult nearestAddition_TSP(double **distances, int numOfCoords, 
         int x = 0;
         for (x = 0; x < noOfThreads; x++) {
 
-            if (threads_min_distance[x] < minimum_Cost) {
-                minimum_Cost = threads_min_distance[x];
+            if (minimumAdditionalCosts[x] < minimum_Cost) {
+                minimum_Cost = minimumAdditionalCosts[x];
                 min_position = positions[x];
-                min_Unvisited_node = nodes[x];
+                min_Unvisited_node = nearestNodes[x];
             }
         }
 
@@ -163,29 +159,22 @@ struct InsertionResult nearestAddition_TSP(double **distances, int numOfCoords, 
         printf("%d ", tour[i]);
         result.tour[i] = tour[i];
     }
-    printf(" \n \n \n ");
-//    }
 
     double cost = 0.0;
-// Iterate over the tour to calculate the cost
     for (int i = 0; i < numOfCoords - 1; i++) {
         int fromVertex = tour[i];
         int toVertex = tour[i + 1];
 
-        // Accumulate the distance between consecutive vertices
         cost += distances[fromVertex][toVertex];
 
     }
 
-// Add the distance from the last vertex back to the starting vertex
     cost += distances[tour[numOfCoords - 1]][tour[0]];
 
     tour[numOfCoords + 1] = cost;
-    result.tourcost = cost;
+    result.tourSize = cost;
 
-// Return the tour
     return result;
-
 }
 
 
@@ -219,8 +208,8 @@ int main(int argc, char *argv[]){
 
     for(int top = 0; top<numOfCoords; top++) {
 
-        struct InsertionResult tempTour  = nearestAddition_TSP(distances, numOfCoords, top);
-        int currentTour = tempTour.tourcost;
+        struct TourData tempTour  = nearestAddition(distances, numOfCoords, top);
+        int currentTour = tempTour.tourSize;
 
         if(currentTour < shortestTour)
         {
@@ -241,7 +230,7 @@ int main(int argc, char *argv[]){
         else{
             printf("\n");
             printf("Current tour size:");
-            printf("%f", tempTour.tourcost);
+            printf("%f", tempTour.tourSize);
             printf("\n");
 
             printf("Shortest tour size:");
