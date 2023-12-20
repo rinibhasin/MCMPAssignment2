@@ -19,7 +19,6 @@ struct TourData {
     double tourSize;
 };
 
-struct TourData nearestAddition(double **distanceMatrix, int numOfCoords, char *outputfile, int startingNode);
 
 struct TourData nearestAddition(double **distanceMatrix, int numOfCoords, char *outputfile, int startingNode) {
 
@@ -83,7 +82,7 @@ struct TourData nearestAddition(double **distanceMatrix, int numOfCoords, char *
             nearestVertexes[y] = 0;
         }
         int i=0, j=0;
-        #pragma omp parallel for collapse(2) private(n, k, threadID) shared(visited, distanceMatrix, minimumAdditionalCosts, positions, nearestVertexes)
+        #pragma omp parallel for collapse(2) private(i, j, threadID) shared(visited, distanceMatrix, minimumAdditionalCosts, positions, nearestVertexes)
         for ( i = 0; i < visitedCount; i++)
         {
             for ( j = 0; j < numOfCoords; j++)
