@@ -17,7 +17,6 @@ struct TourData {
 };
 
 
-
 double **createDistanceMatrix(double **coords, int numOfCoords){
     int i, j;
 
@@ -39,13 +38,14 @@ double **createDistanceMatrix(double **coords, int numOfCoords){
     return dMatrix;
 }
 
-
 struct TourData nearestAddition(double **distances, int numOfCoords, int startingNode) {
 
-    int visitedCount = 1;
+    int visitedCount = 0;
+
     int *tour = malloc((numOfCoords + 1) * sizeof(int));
     bool *visited = malloc(numOfCoords * sizeof(bool));
 
+    // Initialising the tour and visited array
     int p =0;
     for(p =0; p< numOfCoords; p++)
     {
@@ -55,7 +55,8 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
 
     tour[numOfCoords] = 0;
 
-    int nearest;
+
+    // Creating a struct as we need to return two values tour and tour size
     struct TourData result;
     result.tour = malloc((numOfCoords + 1) * sizeof(int));
 
@@ -67,30 +68,34 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
 
     tour[0] = startingNode;
     visited[startingNode] = true;
-    int currentCity = startingNode;
+    visitedCount++;
+
     double minimumDistance = DBL_MAX;
+    int nearest;
 
     for (int i = 0; i < numOfCoords; i++) {
         if (!visited[i]) {
-            if (distances[currentCity][i] < minimumDistance) {
-                minimumDistance = distances[currentCity][i];
+            if (distances[startingNode][i] < minimumDistance) {
+                minimumDistance = distances[startingNode][i];
                 nearest = i;
             }
         }
     }
 
+
+    // Adding the second node
     tour[1] = nearest;
     visited[nearest] = true;
     visitedCount++;
 
-    tour[visitedCount] = startingNode;
+    // Adding starting node at the end to complete the partial tour
+    tour[2] = startingNode;
 
     while (visitedCount < numOfCoords)
     {
-        double minAdditionCost = DBL_MAX;
-        double minimum_Cost = DBL_MAX;
-        int min_position;
-        int min_Unvisited_node;
+        double minimumAdditionalCost = DBL_MAX;
+        int minimumPosition;
+        int minimumUnvisited;
         int positionToAdd, position;
         int y=0;
         double max = DBL_MAX;
@@ -101,13 +106,16 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
             positions[y] = 0;
             nearestNodes[y] = 0;
         }
+
         int i=0, j=0;
         #pragma omp parallel for collapse(2) private(i, j, threadID) shared(visited, distances, minimumAdditionalCosts, positions, nearestNodes)
-        for ( i = 0; i < visitedCount; i++) {
-            for ( j = 0; j < numOfCoords; j++) {
+        for ( i = 0; i < visitedCount; i++)
+        {
+            for ( j = 0; j < numOfCoords; j++)
+            {
                 threadID = omp_get_thread_num();
-                if (!visited[j]) {
-
+                if (!visited[j])
+                {
                     double additionalCost = distances[tour[i]][j];
                     if (additionalCost < minimumAdditionalCosts[threadID]) {
                         minimumAdditionalCosts[threadID] = additionalCost;
@@ -122,57 +130,57 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
         int x = 0;
         for (x = 0; x < noOfThreads; x++) {
 
-            if (minimumAdditionalCosts[x] < minimum_Cost) {
-                minimum_Cost = minimumAdditionalCosts[x];
-                min_position = positions[x];
-                min_Unvisited_node = nearestNodes[x];
+            if (minimumAdditionalCosts[x] < minimumAdditionalCost) {
+                minimumAdditionalCost = minimumAdditionalCosts[x];
+                minimumPosition = positions[x];
+                minimumUnvisited = nearestNodes[x];
             }
         }
 
-        int indexBefore = min_position == 0 ? visitedCount - 1 : min_position - 1;
-        int indexAfter = min_position + 1;
+        int indexBefore = minimumPosition == 0 ? visitedCount - 1 : minimumPosition - 1;
+        int indexAfter = minimumPosition + 1;
 
         double distanceAfter =
-                distances[tour[min_position]][min_Unvisited_node] + distances[tour[indexAfter]][min_Unvisited_node] -
-                distances[tour[min_position]][tour[indexAfter]];
+                distances[tour[minimumPosition]][minimumUnvisited] + distances[tour[indexAfter]][minimumUnvisited] -
+                distances[tour[minimumPosition]][tour[indexAfter]];
         double distanceBefore =
-                distances[tour[min_position]][min_Unvisited_node] + distances[tour[indexBefore]][min_Unvisited_node] -
-                distances[tour[min_position]][tour[indexBefore]];
+                distances[tour[minimumPosition]][minimumUnvisited] + distances[tour[indexBefore]][minimumUnvisited] -
+                distances[tour[minimumPosition]][tour[indexBefore]];
 
         if (distanceAfter < distanceBefore) {
-            min_position = indexAfter;
+            minimumPosition = indexAfter;
         } else {
-            min_position = indexBefore + 1;
+            minimumPosition = indexBefore + 1;
         }
 
-        visitedCount++;
-        visited[min_Unvisited_node] = true;
 
-        for (i = visitedCount; i > min_position; i--) {
+        // Making space in the array
+        for (i = visitedCount; i > minimumPosition; i--) {
             tour[i] = tour[i - 1];
         }
-        tour[min_position] = min_Unvisited_node;
+        tour[minimumPosition] = minimumUnvisited;
+        visited[minimumUnvisited] = true;
+        visitedCount++;
 
     }
 
+
+    // copy tour to the return object
     for (int i = 0; i <= numOfCoords; i++) {
-        printf("%d ", tour[i]);
         result.tour[i] = tour[i];
     }
 
-    double cost = 0.0;
-    for (int i = 0; i < numOfCoords - 1; i++) {
-        int fromVertex = tour[i];
-        int toVertex = tour[i + 1];
-
-        cost += distances[fromVertex][toVertex];
-
+    // Calculate tour cost
+    double totalLength = 0;
+    int i =0;
+    for (i = 0; i <=numOfCoords; i++) {
+        printf("%d ", tour[i]);
+        if(i>0) {
+            totalLength += distances[tour[i]][tour[i - 1]];
+        }
     }
 
-    cost += distances[tour[numOfCoords - 1]][tour[0]];
-
-    tour[numOfCoords + 1] = cost;
-    result.tourSize = cost;
+    result.tourSize = totalLength;
 
     return result;
 }
