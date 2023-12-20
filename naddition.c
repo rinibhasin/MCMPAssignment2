@@ -104,7 +104,6 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
                 }
             }
         }
-
         int x = 0;
         for (x = 0; x < noOfThreads; x++) {
 
@@ -145,6 +144,7 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
 
 
     for (int i = 0; i <= numOfCoords; i++) {
+        printf("%d ", tour[i]);
         result.tour[i] = tour[i];
     }
 
@@ -187,7 +187,7 @@ double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double *
     double y2 =0;
     double distance = 0;
 
-#pragma omp parallel for collapse(2) private(i, j, x1, y1, x2, y2, distance) shared(numOfCoords)
+//#pragma omp parallel for collapse(2) private(i, j, x1, y1, x2, y2, distance) shared(numOfCoords)
     for (i = 0; i < numOfCoords; i++) {
         for (j = 0; j < numOfCoords; j++) {
 
@@ -229,7 +229,7 @@ int main(int argc, char *argv[]) {
     double **distanceMatrix = (double **)malloc(numOfCoords * sizeof(double *));
 
     int i = 0;
-    #pragma omp parallel for private(i)
+//    #pragma omp parallel for private(i)
     for (i = 0; i < numOfCoords; i++) {
         distanceMatrix[i] = (double *)malloc(numOfCoords * sizeof(double));
     }
