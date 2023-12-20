@@ -1,5 +1,3 @@
-
-
 #include <stdio.h>
 #include <float.h>
 #include <stdlib.h>
@@ -225,7 +223,7 @@ int main(int argc, char *argv[]) {
     double **distanceMatrix = (double **)malloc(numOfCoords * sizeof(double *));
 
     int i = 0;
-#pragma omp parallel for private(i)
+   #pragma omp parallel for private(i)
     for (i = 0; i < numOfCoords; i++) {
         distanceMatrix[i] = (double *)malloc(numOfCoords * sizeof(double));
     }
@@ -233,10 +231,12 @@ int main(int argc, char *argv[]) {
     distanceMatrix = calculateDistanceMatrix(coordinates, numOfCoords, distanceMatrix);
 
 
+
     double shortestTour = DBL_MAX;
     int *shortestTourArray =  (int *)malloc((numOfCoords+1) * sizeof(int *));
 
     for(int top = 0; top<numOfCoords; top++) {
+
         struct TourData tempTour =  cheapestInsertion(distanceMatrix, numOfCoords, outputfile, top);
 
         int currentTour = tempTour.tourSize;
