@@ -5,6 +5,8 @@
 #include <math.h>
 #include <stdio.h>
 #include <omp.h>
+#include <string.h>
+
 
 
 int readNumOfCoords(char *filename);
@@ -27,6 +29,8 @@ void initializeStruct(struct TourData* myStruct, double size) {
 void cleanupStruct(struct TourData* myStruct) {
     free(myStruct->tour);
 }
+
+
 
 int main(int argc, char *argv[]){
 
