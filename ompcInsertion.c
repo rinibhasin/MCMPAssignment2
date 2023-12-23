@@ -94,9 +94,9 @@ struct TourData cheapestInsertion(double **distanceMatrix, int numOfCoords, char
 
     for(i = 0 ; i <numOfCoords; i++)
     {
-        if(i != startingNode && distanceMatrix[0][i]< minimumDistance)
+        if(i != startingNode && distanceMatrix[startingNode][i]< minimumDistance)
         {
-            minimumDistance = distanceMatrix[0][i];
+            minimumDistance = distanceMatrix[startingNode][i];
             nearestVertex = i;
         }
     }
