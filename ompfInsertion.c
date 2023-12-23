@@ -7,6 +7,17 @@
 #include <float.h>
 
 
+
+struct TourData {
+    int* tour;
+    double tourSize;
+};
+
+void initializeStruct(struct TourData* myStruct, double size) {
+    myStruct->tour = (int*)malloc(size * sizeof(int));
+    myStruct->tourSize = size;
+}
+
 struct TourData farthestInsertion(double **dMatrix, int numOfCoords, int top){
 	//Setting up variables
 	int nextNode, insertPos;
