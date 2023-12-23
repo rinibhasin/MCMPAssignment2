@@ -8,6 +8,10 @@
 #include <string.h>
 
 
+struct TourData {
+    int* tour;
+    double tourSize;
+};
 
 int readNumOfCoords(char *filename);
 double **readCoords(char *filename, int numOfCoords);
@@ -16,15 +20,7 @@ double **createDistanceMatrix(double **coords, int numOfCoords);
 double sqrt(double arg);
 struct TourData farthestInsertion(double **dMatrix, int numOfCoords, int top);
 
-struct TourData {
-    int* tour;
-    double tourSize;
-};
 
-void initializeStruct(struct TourData* myStruct, double size) {
-    myStruct->tour = (int*)malloc(size * sizeof(int));
-    myStruct->tourSize = size;
-}
 
 void cleanupStruct(struct TourData* myStruct) {
     free(myStruct->tour);
