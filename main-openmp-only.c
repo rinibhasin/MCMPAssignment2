@@ -36,9 +36,9 @@ int main(int argc, char *argv[]){
 //    }
 
     //Argument setup for file and output
-    char filename[500];
-    char outFileName1[500];
-    char outFileName2[500];
+    char *filename;
+    char *outFileName1;
+    char *outFileName2;
     char outFileName3[500];
 
     filename = argv[1];
