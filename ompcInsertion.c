@@ -22,11 +22,6 @@ void initializeStruct(struct TourData* myStruct, double size) {
     myStruct->tourSize = size;
 }
 
-void cleanupStruct(struct TourData* myStruct) {
-    free(myStruct->tour);
-}
-
-
 struct TourData cheapestInsertion(double **distanceMatrix, int numOfCoords, int startingNode)
 {
     int visitedCount = 0;
