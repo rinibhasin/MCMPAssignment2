@@ -19,6 +19,7 @@ void *writeTourToFile(int *tour, int tourLength, char *filename);
 double **createDistanceMatrix(double **coords, int numOfCoords);
 double sqrt(double arg);
 struct TourData farthestInsertion(double **dMatrix, int numOfCoords, int top);
+struct TourData cheapestInsertion(double **dMatrix, int numOfCoords, int top);
 
 
 
