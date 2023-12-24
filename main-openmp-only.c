@@ -30,10 +30,10 @@ struct TourData cheapestInsertion(double **dMatrix, int numOfCoords, int top);
 
 int main(int argc, char *argv[]){
 
-    if(argc != 5){
-        printf("Program should be called as ./program <coordFile> <outFileName>");
-        return 1;
-    }
+//    if(argc != 4){
+//        printf("Program should be called as ./program <coordFile> <outFileName>");
+//        return 1;
+//    }
 
     //Argument setup for file and output
     char filename[500];
@@ -44,7 +44,7 @@ int main(int argc, char *argv[]){
     strcpy(filename, argv[1]);
     strcpy(outFileName1, argv[2]);
     strcpy(outFileName2, argv[2]);
-    strcpy(outFileName3, argv[2]);
+//    strcpy(outFileName3, argv[2]);
 
     //Reading files and setting up the distance matrix
     int numOfCoords = readNumOfCoords(filename);
