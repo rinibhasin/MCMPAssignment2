@@ -69,8 +69,8 @@ int main(int argc, char *argv[]){
         if(currentTourFarthest < shortestTourFarthest)
         {
             printf("Farthest");
-            printf("Shortest tour: %f\n", shortestTour);
-            printf("Current Tour: %f\n", currentTour);
+            printf("Shortest tour: %f\n", shortestTourFarthest);
+            printf("Current Tour: %f\n", currentTourFarthest);
             shortestTourFarthest = currentTourFarthest;
             printf("Found tour shorter than current tour");
             printf("\n");
