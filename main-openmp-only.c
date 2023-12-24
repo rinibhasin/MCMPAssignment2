@@ -41,9 +41,13 @@ int main(int argc, char *argv[]){
     char outFileName2[500];
     char outFileName3[500];
 
-    strcpy(filename, argv[1]);
-    strcpy(outFileName1, argv[2]);
-    strcpy(outFileName2, argv[2]);
+    filename = argv[1];
+    outFileName1 = argv[2];
+    outFileName2 = argv[3];
+//
+//    strcpy(filename, argv[1]);
+//    strcpy(outFileName1, argv[2]);
+//    strcpy(outFileName2, argv[2]);
 //    strcpy(outFileName3, argv[2]);
 
     //Reading files and setting up the distance matrix
@@ -110,7 +114,7 @@ int main(int argc, char *argv[]){
     double tEnd = omp_get_wtime();
 
     printf("\nTook %f milliseconds", (tEnd - tStart) * 1000);
-    printf("Writing tour to file farthest", (tEnd - tStart) * 1000);
+    printf("Writing tour to file farthest");
 
 
 
@@ -118,7 +122,7 @@ int main(int argc, char *argv[]){
         printf("Error");
     }
 
-    printf("Writing tour to file cheapest", (tEnd - tStart) * 1000);
+    printf("Writing tour to file cheapest");
 
 
     if (writeTourToFile(shortestTourArrayCheapest, numOfCoords + 1, outFileName2) == NULL){
