@@ -11,10 +11,6 @@ struct TourData {
     double tourSize;
 };
 
-void initializeStruct(struct TourData* myStruct, double size) {
-    myStruct->tour = (int*)malloc(size * sizeof(int));
-    myStruct->tourSize = size;
-}
 
 struct TourData farthestInsertion(double **dMatrix, int numOfCoords, int top){
 	//Setting up variables
@@ -164,8 +160,7 @@ struct TourData farthestInsertion(double **dMatrix, int numOfCoords, int top){
 
     struct TourData tourData;
 
-    initializeStruct(&tourData, numOfCoords+1);
-
+    tourData.tour = malloc((numOfCoords+1) * sizeof(int));
     int count =0;
     for(count =0; count< numOfCoords+1; count++)
     {

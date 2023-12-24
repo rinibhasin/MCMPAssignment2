@@ -17,10 +17,6 @@ struct TourData {
     double tourSize;
 };
 
-void initializeStruct(struct TourData* myStruct, double size) {
-    myStruct->tour = (int*)malloc(size * sizeof(int));
-    myStruct->tourSize = size;
-}
 
 struct TourData cheapestInsertion(double **distanceMatrix, int numOfCoords, int startingNode)
 {
@@ -145,7 +141,7 @@ struct TourData cheapestInsertion(double **distanceMatrix, int numOfCoords, int 
 
     struct TourData tourData;
 
-    initializeStruct(&tourData, numOfCoords+1);
+    tourData.tour = malloc((numOfCoords+1) * sizeof(int));
 
     int count =0;
     for(count =0; count< numOfCoords+1; count++)
