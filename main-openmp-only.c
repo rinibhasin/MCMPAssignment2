@@ -22,10 +22,10 @@ struct TourData farthestInsertion(double **dMatrix, int numOfCoords, int top);
 struct TourData cheapestInsertion(double **dMatrix, int numOfCoords, int top);
 
 
-
-void cleanupStruct(struct TourData* myStruct) {
-    free(myStruct->tour);
-}
+//
+//void cleanupStruct(struct TourData* myStruct) {
+//    free(myStruct->tour);
+//}
 
 
 int main(int argc, char *argv[]){
