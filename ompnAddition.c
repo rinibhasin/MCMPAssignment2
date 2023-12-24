@@ -16,8 +16,6 @@ struct TourData {
     double tourSize;
 };
 
-
-
 double **createDistanceMatrix(double **coords, int numOfCoords){
     int i, j;
 

@@ -6,8 +6,6 @@
 #include<omp.h>
 #include <float.h>
 
-
-
 struct TourData {
     int* tour;
     double tourSize;

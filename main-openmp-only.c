@@ -27,78 +27,100 @@ void cleanupStruct(struct TourData* myStruct) {
 }
 
 
-
 int main(int argc, char *argv[]){
 
-    if(argc != 3){
+    if(argc != 5){
         printf("Program should be called as ./program <coordFile> <outFileName>");
         return 1;
     }
 
-
     //Argument setup for file and output
     char filename[500];
-    char outFileName[500];
+    char outFileName1[500];
+    char outFileName2[500];
+    char outFileName3[500];
 
     strcpy(filename, argv[1]);
-    strcpy(outFileName, argv[2]);
+    strcpy(outFileName1, argv[2]);
+    strcpy(outFileName2, argv[2]);
+    strcpy(outFileName3, argv[2]);
 
     //Reading files and setting up the distance matrix
     int numOfCoords = readNumOfCoords(filename);
     double **coords = readCoords(filename, numOfCoords);
-    double shortestTour = DBL_MAX;
-    int *shortestTourArray =  (int *)malloc((numOfCoords+1) * sizeof(int *));
 
+
+    double shortestTourFarthest = DBL_MAX;
+    int *shortestTourArrayFarthest =  (int *)malloc((numOfCoords+1) * sizeof(int *));
+
+    double shortestTourCheapest = DBL_MAX;
+    int *shortestTourArrayCheapest =  (int *)malloc((numOfCoords+1) * sizeof(int *));
 
     double tStart = omp_get_wtime();
 
-    /*Program starts*/
-
     double **distances = createDistanceMatrix(coords, numOfCoords);
 
-    for(int top = 0; top<numOfCoords; top++) {
+    for(int top = 0; top<numOfCoords; top++)
+    {
 
-        struct TourData tempTour  = farthestInsertion(distances, numOfCoords, top);
-        int currentTour = tempTour.tourSize;
+        struct TourData tempTourFarthest  = farthestInsertion(distances, numOfCoords, top);
+        int currentTourFarthest = tempTourFarthest.tourSize;
 
-        if(currentTour < shortestTour)
+        if(currentTourFarthest < shortestTourFarthest)
         {
+            printf("Farthest");
             printf("Shortest tour: %f\n", shortestTour);
             printf("Current Tour: %f\n", currentTour);
-            shortestTour = currentTour;
-
+            shortestTourFarthest = currentTourFarthest;
             printf("Found tour shorter than current tour");
             printf("\n");
-            printf("shortest tour now starting with %d", tempTour.tour[0]);
-            int copy =0;
+            printf("Shortest tour now starting with %d", tempTourFarthest.tour[0]);
+            // Copying the array to keep track to write to output file later
+            int copy=0;
             for(copy =0; copy <numOfCoords+1; copy++)
             {
 
-                shortestTourArray[copy] = tempTour.tour[copy];
+                shortestTourArrayFarthest[copy] = tempTourFarthest.tour[copy];
             }
         }
-        else{
-            printf("\n");
-            printf("Current tour size:");
-            printf("%f", tempTour.tourSize);
-            printf("\n");
 
-            printf("Shortest tour size:");
-            printf("%f", shortestTour);
+
+        struct TourData tempTourCheapest  = cheapestInsertion(distances, numOfCoords, top);
+        int currentTourCheapest = tempTourCheapest.tourSize;
+
+        if(currentTourCheapest < shortestTourCheapest)
+        {
+            printf("Cheapest");
+            printf("Shortest tour: %f\n", shortestTourCheapest);
+            printf("Current Tour: %f\n", currentTourCheapest);
+            shortestTourCheapest = currentTourCheapest;
+            printf("Found tour shorter than current tour");
             printf("\n");
-            printf("Found tour longer than current tour");
-            printf("\n");
+            printf("Shortest tour now starting with %d", tempTourCheapest.tour[0]);
+            // Copying the array to keep track to write to output file later
+            int copy=0;
+            for(copy =0; copy <numOfCoords+1; copy++)
+            {
+                shortestTourArrayCheapest[copy] = tempTourCheapest.tour[copy];
+            }
         }
-
     }
-
-    /*Program ends*/
 
     double tEnd = omp_get_wtime();
 
     printf("\nTook %f milliseconds", (tEnd - tStart) * 1000);
+    printf("Writing tour to file farthest", (tEnd - tStart) * 1000);
 
-    if (writeTourToFile(shortestTourArray, numOfCoords + 1, outFileName) == NULL){
+
+
+    if (writeTourToFile(shortestTourArrayFarthest, numOfCoords + 1, outFileName1) == NULL){
+        printf("Error");
+    }
+
+    printf("Writing tour to file cheapest", (tEnd - tStart) * 1000);
+
+
+    if (writeTourToFile(shortestTourArrayCheapest, numOfCoords + 1, outFileName2) == NULL){
         printf("Error");
     }
 

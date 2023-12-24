@@ -26,8 +26,45 @@ void cleanupStruct(struct TourData* myStruct) {
     free(myStruct->tour);
 }
 
+int readNumOfCoords(char *fileName);
+double **readCoords(char *filename, int numOfCoords);
+void *writeTourToFile(int *tour, int tourLength, char *filename);
 
-struct TourData cheapestInsertion(double **distanceMatrix, int numOfCoords, int startingNode)
+
+double calculateDistance(double x1, double y1, double x2, double y2) {
+    // Calculate the Euclidean distance between two points.
+    return sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
+}
+
+double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double **distanceMatrix) {
+
+    int i =0; int j =0;
+    double x1 =0;
+    double x2 =0;
+    double y1 =0;
+    double y2 =0;
+    double distance = 0;
+
+#pragma omp parallel for collapse(2) private(i, j, x1, y1, x2, y2, distance) shared(numOfCoords)
+    for (i = 0; i < numOfCoords; i++) {
+        for (j = 0; j < numOfCoords; j++) {
+
+            x1 = coordinates[i][0];
+            y1 = coordinates[i][1];
+            x2 = coordinates[j][0];
+            y2 = coordinates[j][1];
+
+            distance = calculateDistance(x1, y1, x2, y2);
+
+            distanceMatrix[i][j] = distance;
+
+        }
+    }
+
+    return distanceMatrix;
+}
+
+struct TourData cheapestInsertion(double **distanceMatrix, int numOfCoords, char *outputFileName, int startingNode)
 {
     int visitedCount = 0;
 
@@ -163,5 +200,99 @@ struct TourData cheapestInsertion(double **distanceMatrix, int numOfCoords, int 
     return tourData;
 }
 
+
+int main(int argc, char *argv[]) {
+
+    // Taking default file names if user didn't provide input
+    char *fileName = "16_coords.coord";
+    char *outputfile = "output.txt";
+
+    if (argc > 1) {
+        fileName = argv[1];
+        outputfile = argv[2];
+    }
+
+    double start, end;
+    double time_taken;
+
+    start = omp_get_wtime();;
+
+    int numOfCoords = readNumOfCoords(fileName);
+
+    double **coordinates = readCoords(fileName, numOfCoords);
+
+    double **distanceMatrix = (double **)malloc(numOfCoords * sizeof(double *));
+
+    int i = 0;
+    #pragma omp parallel for private(i)
+    for (i = 0; i < numOfCoords; i++) {
+        distanceMatrix[i] = (double *)malloc(numOfCoords * sizeof(double));
+    }
+
+    distanceMatrix = calculateDistanceMatrix(coordinates, numOfCoords, distanceMatrix);
+
+    double shortestTour = DBL_MAX;
+
+    int *shortestTourArray =  (int *)malloc((numOfCoords+1) * sizeof(int *));
+
+    for(i = 0; i< numOfCoords; i++)
+    {
+        struct TourData tempTour = cheapestInsertion(distanceMatrix, numOfCoords, outputfile, i);
+        int currentTour = tempTour.tourSize;
+
+        if(currentTour < shortestTour)
+        {
+            shortestTour = currentTour;
+            printf("\n");
+            printf("Found tour shorter than current tour");
+
+            printf("shortest tour now starting with %d", tempTour.tour[0]);
+            //make copy
+            int j =0;
+            for(j =0; j <numOfCoords+1; j++)
+            {
+                shortestTourArray[j] = tempTour.tour[j];
+            }
+        }
+
+        else
+        {
+            printf("Current tour size:");
+            printf("%f", tempTour.tourSize);
+            printf("\n");
+
+            printf("Shortes tour size:");
+            printf("%f", shortestTour);
+            printf("\n");
+            printf("Found tour longer than current tour");
+            printf("");
+        }
+    }
+
+    printf("Writing the shortest tour to file\n: ");
+
+    printf("Starting with %d: ", shortestTourArray[0]);
+
+    writeTourToFile(shortestTourArray, numOfCoords+1, outputfile);
+
+    end = omp_get_wtime();
+    time_taken = (end - start);
+
+    printf("Cheapest insertion for %d nodes completed\n", numOfCoords);
+    printf("The time taken is %fs .\n", time_taken);
+
+    // Free memory
+    for (i = 0; i < numOfCoords; i++) {
+        free(coordinates[i]);
+    }
+    free(coordinates);
+
+    for (i = 0; i < numOfCoords; i++) {
+        free(distanceMatrix[i]);
+    }
+    free(distanceMatrix);
+//    cleanupStruct(&tempTour);
+    return 0;
+}
 
 
