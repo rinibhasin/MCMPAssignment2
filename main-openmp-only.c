@@ -146,7 +146,9 @@ int main(int argc, char *argv[]){
     }
 
     free(distances);
-    free(tour);
+    free(shortestTourArrayCheapest);
+    free(shortestTourArrayNearest);
+    free(shortestTourArrayFarthest);
 
 }
 
