@@ -122,7 +122,6 @@ int main(int argc, char *argv[]){
     printf("Writing tour to file farthest %s\n", outFileName1);
 
 
-
     if (writeTourToFile(shortestTourArrayFarthest, numOfCoords + 1, outFileName1) == NULL){
         printf("Error");
     }
@@ -147,6 +146,8 @@ int main(int argc, char *argv[]){
     }
 
     free(distances);
+    free(tour);
+
 }
 
 double **createDistanceMatrix(double **coords, int numOfCoords){
