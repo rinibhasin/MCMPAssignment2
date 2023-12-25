@@ -141,7 +141,7 @@ int main(int argc, char *argv[]){
         printf("Error");
     }
 
-    Free memory
+//    Free memory
     for(int i = 0; i < numOfCoords; i++){
         free(distances[i]);
     }
