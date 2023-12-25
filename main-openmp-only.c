@@ -95,25 +95,25 @@ int main(int argc, char *argv[]){
             }
         }
 
-        struct TourData tempTourNearest  = nearestAddition(distances, numOfCoords, top);
-        int currentTourNearest = tempTourNearest.tourSize;
-
-        if(currentTourNearest < shortestTourNearest)
-        {
-//            printf("Nearest");
-//            printf("Shortest tour: %f\n", shortestTourNearest);
-//            printf("Current Tour: %f\n", currentTourNearest);
-            shortestTourNearest = currentTourNearest;
-//            printf("Found tour shorter than current tour");
-//            printf("\n");
-//            printf("Shortest tour now starting with %d", tempTourCheapest.tour[0]);
-            // Copying the array to keep track to write to output file later
-            int copy=0;
-            for(copy =0; copy <numOfCoords+1; copy++)
-            {
-                shortestTourArrayNearest[copy] = tempTourNearest.tour[copy];
-            }
-        }
+//        struct TourData tempTourNearest  = nearestAddition(distances, numOfCoords, top);
+//        int currentTourNearest = tempTourNearest.tourSize;
+//
+//        if(currentTourNearest < shortestTourNearest)
+//        {
+////            printf("Nearest");
+////            printf("Shortest tour: %f\n", shortestTourNearest);
+////            printf("Current Tour: %f\n", currentTourNearest);
+//            shortestTourNearest = currentTourNearest;
+////            printf("Found tour shorter than current tour");
+////            printf("\n");
+////            printf("Shortest tour now starting with %d", tempTourCheapest.tour[0]);
+//            // Copying the array to keep track to write to output file later
+//            int copy=0;
+//            for(copy =0; copy <numOfCoords+1; copy++)
+//            {
+//                shortestTourArrayNearest[copy] = tempTourNearest.tour[copy];
+//            }
+//        }
     }
 
     double tEnd = omp_get_wtime();
@@ -136,9 +136,9 @@ int main(int argc, char *argv[]){
     printf("Writing tour to file nearest %s\n", outFileName3);
 
 
-    if (writeTourToFile(shortestTourArrayNearest, numOfCoords + 1, outFileName3) == NULL){
-        printf("Error");
-    }
+//    if (writeTourToFile(shortestTourArrayNearest, numOfCoords + 1, outFileName3) == NULL){
+//        printf("Error");
+//    }
 
 //    Free memory
     for(int i = 0; i < numOfCoords; i++){
@@ -147,7 +147,7 @@ int main(int argc, char *argv[]){
 
     free(distances);
     free(shortestTourArrayCheapest);
-    free(shortestTourArrayNearest);
+//    free(shortestTourArrayNearest);
     free(shortestTourArrayFarthest);
 
 }
