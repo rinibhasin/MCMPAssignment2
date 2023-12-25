@@ -103,7 +103,7 @@ int main(int argc, char *argv[]){
 //            printf("Nearest");
 //            printf("Shortest tour: %f\n", shortestTourNearest);
 //            printf("Current Tour: %f\n", currentTourNearest);
-            currentTourNearest = currentTourNearest;
+            shortestTourNearest = currentTourNearest;
 //            printf("Found tour shorter than current tour");
 //            printf("\n");
 //            printf("Shortest tour now starting with %d", tempTourCheapest.tour[0]);
@@ -141,12 +141,12 @@ int main(int argc, char *argv[]){
         printf("Error");
     }
 
-    //Free memory
-//    for(int i = 0; i < numOfCoords; i++){
-//        free(distances[i]);
-//    }
+    Free memory
+    for(int i = 0; i < numOfCoords; i++){
+        free(distances[i]);
+    }
 
-//    free(distances);
+    free(distances);
 }
 
 double **createDistanceMatrix(double **coords, int numOfCoords){
