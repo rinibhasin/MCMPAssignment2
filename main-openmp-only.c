@@ -35,7 +35,7 @@ int main(int argc, char *argv[]){
     filename = argv[1];
     outFileName1 = argv[2];
     outFileName2 = argv[3];
-    outFileName3 = argv[3];
+    outFileName3 = argv[4];
 
 
     //Reading files and setting up the distance matrix
