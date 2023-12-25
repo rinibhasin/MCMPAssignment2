@@ -127,6 +127,7 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
         }
         tour[min_position] = min_Unvisited_node;
 
+
     }
 
     for (int i = 0; i <= numOfCoords; i++) {
@@ -134,19 +135,28 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
         result.tour[i] = tour[i];
     }
 
-    double cost = 0.0;
-    for (int i = 0; i < numOfCoords - 1; i++) {
-        int fromVertex = tour[i];
-        int toVertex = tour[i + 1];
-
-        cost += distances[fromVertex][toVertex];
-
+    double totalLength = 0;
+    for ( i = 0; i <=numOfCoords; i++) {
+        printf("%d ", tour[i]);
+        if(i>0) {
+            totalLength += distanceMatrix[tour[i]][tour[i - 1]];
+        }
     }
 
-    cost += distances[tour[numOfCoords - 1]][tour[0]];
+    result.tourSize = totalLength;
 
-//    tour[numOfCoords + 1] = cost;
-    result.tourSize = cost;
+//    double cost = 0.0;
+//    for (int i = 0; i < numOfCoords - 1; i++) {
+//        int fromVertex = tour[i];
+//        int toVertex = tour[i + 1];
+//
+//        cost += distances[fromVertex][toVertex];
+//
+//    }
+//
+//    cost += distances[tour[numOfCoords - 1]][tour[0]];
+
+//    result.tourSize = totalLength;
 
     return result;
 }
