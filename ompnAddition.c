@@ -30,8 +30,6 @@ struct TourData nearestAddition(double **distanceMatrix, int numOfCoords, int st
     tour[numOfCoords] = 0;
 
 
-
-
     int nearest;
 
     int noOfThreads = omp_get_max_threads();
@@ -128,11 +126,10 @@ struct TourData nearestAddition(double **distanceMatrix, int numOfCoords, int st
         double distanceAfter = distanceMatrix[tour[minN]][minUnvisited] + distanceMatrix[tour[indexNext]][minUnvisited] -
                 distanceMatrix[tour[minN]][tour[indexNext]];
 
-        if (distanceBefore > distanceAfter)
+        if (distanceAfter < distanceBefore)
         {
             minN = indexNext;
-        }
-        else
+        } else
         {
             minN = indexPrevious + 1;
         }
