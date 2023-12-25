@@ -139,7 +139,7 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
     for ( i = 0; i <=numOfCoords; i++) {
         printf("%d ", tour[i]);
         if(i>0) {
-            totalLength += distanceMatrix[tour[i]][tour[i - 1]];
+            totalLength += distances[tour[i]][tour[i - 1]];
         }
     }
 
