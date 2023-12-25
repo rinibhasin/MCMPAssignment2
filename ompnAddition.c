@@ -136,6 +136,7 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
     }
 
     double totalLength = 0;
+    int i;
     for ( i = 0; i <=numOfCoords; i++) {
         printf("%d ", tour[i]);
         if(i>0) {
