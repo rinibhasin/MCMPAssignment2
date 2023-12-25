@@ -145,7 +145,7 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
 
     cost += distances[tour[numOfCoords - 1]][tour[0]];
 
-    tour[numOfCoords + 1] = cost;
+//    tour[numOfCoords + 1] = cost;
     result.tourSize = cost;
 
     return result;
