@@ -44,9 +44,12 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
 
     double minimumDistance = DBL_MAX;
 
-    for (int i = 0; i < numOfCoords; i++) {
-        if (!visited[i]) {
-            if (distances[startingNode][i] < minimumDistance) {
+    for (int i = 0; i < numOfCoords; i++)
+    {
+        if (!visited[i])
+        {
+            if (distances[startingNode][i] < minimumDistance)
+            {
                 minimumDistance = distances[startingNode][i];
                 nearest = i;
             }
@@ -65,22 +68,26 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
         double minimum_Cost = DBL_MAX;
         int min_position;
         int min_Unvisited_node;
-        int positionToAdd, position;
         int y=0;
         double max = DBL_MAX;
         int threadID;
 
-        for (y = 0; y < noOfThreads; y++) {
+        for (y = 0; y < noOfThreads; y++)
+        {
             minimumAdditionalCosts[y] = DBL_MAX;
             positions[y] = 0;
             nearestNodes[y] = 0;
         }
+
         int i=0, j=0;
-#pragma omp parallel for collapse(2) private(i, j, threadID) shared(visited, distances, minimumAdditionalCosts, positions, nearestNodes)
-        for ( i = 0; i < visitedCount; i++) {
-            for ( j = 0; j < numOfCoords; j++) {
+        #pragma omp parallel for collapse(2) private(i, j, threadID) shared(visited, distances, minimumAdditionalCosts, positions, nearestNodes)
+        for ( i = 0; i < visitedCount; i++)
+        {
+            for ( j = 0; j < numOfCoords; j++)
+            {
                 threadID = omp_get_thread_num();
-                if (!visited[j]) {
+                if (!visited[j])
+                {
 
                     double additionalCost = distances[tour[i]][j];
                     if (additionalCost < minimumAdditionalCosts[threadID]) {
@@ -113,19 +120,23 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
                 distances[tour[min_position]][min_Unvisited_node] + distances[tour[indexBefore]][min_Unvisited_node] -
                 distances[tour[min_position]][tour[indexBefore]];
 
-        if (distanceAfter < distanceBefore) {
+        if (distanceAfter < distanceBefore)
+        {
             min_position = indexAfter;
-        } else {
+        }
+        else
+        {
             min_position = indexBefore + 1;
         }
 
-        visitedCount++;
-        visited[min_Unvisited_node] = true;
-
-        for (i = visitedCount; i > min_position; i--) {
+        for (i = visitedCount; i > min_position; i--)
+        {
             tour[i] = tour[i - 1];
         }
+
         tour[min_position] = min_Unvisited_node;
+        visited[min_Unvisited_node] = true;
+        visitedCount++;
 
 
     }
