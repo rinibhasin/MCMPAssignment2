@@ -65,13 +65,8 @@ int main(int argc, char *argv[]){
 
         if(currentTourFarthest < shortestTourFarthest)
         {
-            printf("Farthest");
-            printf("Shortest tour: %f\n", shortestTourFarthest);
-            printf("Current Tour: %f\n", currentTourFarthest);
+
             shortestTourFarthest = currentTourFarthest;
-            printf("Found tour shorter than current tour");
-            printf("\n");
-            printf("Shortest tour now starting with %d", tempTourFarthest.tour[0]);
             // Copying the array to keep track to write to output file later
             int copy=0;
             for(copy =0; copy <numOfCoords+1; copy++)
@@ -87,9 +82,7 @@ int main(int argc, char *argv[]){
 
         if(currentTourCheapest < shortestTourCheapest)
         {
-            printf("Cheapest");
-            printf("Shortest tour: %f\n", shortestTourCheapest);
-            printf("Current Tour: %f\n", currentTourCheapest);
+
             shortestTourCheapest = currentTourCheapest;
             printf("Found tour shorter than current tour");
             printf("\n");
@@ -107,13 +100,13 @@ int main(int argc, char *argv[]){
 
         if(currentTourNearest < shortestTourNearest)
         {
-            printf("Nearest");
-            printf("Shortest tour: %f\n", shortestTourNearest);
-            printf("Current Tour: %f\n", currentTourNearest);
+//            printf("Nearest");
+//            printf("Shortest tour: %f\n", shortestTourNearest);
+//            printf("Current Tour: %f\n", currentTourNearest);
             currentTourNearest = currentTourNearest;
-            printf("Found tour shorter than current tour");
-            printf("\n");
-            printf("Shortest tour now starting with %d", tempTourCheapest.tour[0]);
+//            printf("Found tour shorter than current tour");
+//            printf("\n");
+//            printf("Shortest tour now starting with %d", tempTourCheapest.tour[0]);
             // Copying the array to keep track to write to output file later
             int copy=0;
             for(copy =0; copy <numOfCoords+1; copy++)
@@ -149,11 +142,11 @@ int main(int argc, char *argv[]){
     }
 
     //Free memory
-    for(int i = 0; i < numOfCoords; i++){
-        free(distances[i]);
-    }
+//    for(int i = 0; i < numOfCoords; i++){
+//        free(distances[i]);
+//    }
 
-    free(distances);
+//    free(distances);
 }
 
 double **createDistanceMatrix(double **coords, int numOfCoords){
