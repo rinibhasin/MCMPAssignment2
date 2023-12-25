@@ -136,9 +136,9 @@ int main(int argc, char *argv[]){
     printf("Writing tour to file nearest %s\n", outFileName3);
 
 
-//    if (writeTourToFile(shortestTourArrayNearest, numOfCoords + 1, outFileName3) == NULL){
-//        printf("Error");
-//    }
+    if (writeTourToFile(shortestTourArrayNearest, numOfCoords + 1, outFileName3) == NULL){
+        printf("Error");
+    }
 
 //    Free memory
     for(int i = 0; i < numOfCoords; i++){
