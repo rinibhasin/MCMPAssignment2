@@ -68,7 +68,6 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
         int minN;
         int minUnvisited;
         int y=0;
-        double max = DBL_MAX;
         int threadID;
 
         for (y = 0; y < noOfThreads; y++)
@@ -102,38 +101,57 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
         int x = 0;
         for (x = 0; x < noOfThreads; x++) {
 
-            if (minimumAdditionalCosts[x] < minimumAdditionalCost) {
+            if (minimumAdditionalCosts[x] < minimumAdditionalCost)
+            {
                 minimumAdditionalCost = minimumAdditionalCosts[x];
                 minN = positions[x];
                 minUnvisited = nearestNodes[x];
             }
         }
 
-        int indexBefore = minN == 0 ? visitedCount - 1 : minN - 1;
-        int indexAfter = minN + 1;
+        int indexPrevious = minN == 0 ? visitedCount - 1 : minN - 1;
+        int indexNext = minN + 1;
+
+        double distanceBefore =
+                distances[tour[minN]][minUnvisited] + distances[tour[indexPrevious]][minUnvisited] -
+                distances[tour[minN]][tour[indexPrevious]];
 
         double distanceAfter =
-                distances[tour[minN]][minUnvisited] + distances[tour[indexAfter]][minUnvisited] -
-                distances[tour[minN]][tour[indexAfter]];
-        double distanceBefore =
-                distances[tour[minN]][minUnvisited] + distances[tour[indexBefore]][minUnvisited] -
-                distances[tour[minN]][tour[indexBefore]];
+                distances[tour[minN]][minUnvisited] + distances[tour[indexNext]][minUnvisited] -
+                distances[tour[minN]][tour[indexNext]];
 
         if (distanceAfter < distanceBefore)
         {
-            minN = indexAfter;
+            minN = indexNext;
         }
-        else {
-            minN = indexBefore + 1;
+        else
+        {
+            minN = indexPrevious + 1;
         }
+
+
+        // Make space to add unvisited node to computed index
+        for(i = visitedCount; i > minN; i--)
+        {
+            tour[i+1] = tour[i];
+        }
+
+
+        // add the node to tour
+        visited[minUnvisited] = true;
+        tour[minN+1] = minUnvisited;
+
 
         visitedCount++;
-        visited[minUnvisited] = true;
 
-        for (i = visitedCount; i > minN; i--) {
-            tour[i] = tour[i - 1];
-        }
-        tour[minN] = minUnvisited;
+//        // change this portion
+//        visitedCount++;
+//        visited[minUnvisited] = true;
+//
+//        for (i = visitedCount; i > minN; i--) {
+//            tour[i] = tour[i - 1];
+//        }
+//        tour[minN] = minUnvisited;
 
 
     }
