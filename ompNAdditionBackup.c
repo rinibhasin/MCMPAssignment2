@@ -64,10 +64,9 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
 
     while (visitedCount < numOfCoords)
     {
-        double minAdditionCost = DBL_MAX;
-        double minimum_Cost = DBL_MAX;
-        int min_position;
-        int min_Unvisited_node;
+        double minimumAdditionalCost = DBL_MAX;
+        int minN;
+        int minUnvisited;
         int y=0;
         double max = DBL_MAX;
         int threadID;
@@ -103,38 +102,38 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
         int x = 0;
         for (x = 0; x < noOfThreads; x++) {
 
-            if (minimumAdditionalCosts[x] < minimum_Cost) {
-                minimum_Cost = minimumAdditionalCosts[x];
-                min_position = positions[x];
-                min_Unvisited_node = nearestNodes[x];
+            if (minimumAdditionalCosts[x] < minimumAdditionalCost) {
+                minimumAdditionalCost = minimumAdditionalCosts[x];
+                minN = positions[x];
+                minUnvisited = nearestNodes[x];
             }
         }
 
-        int indexBefore = min_position == 0 ? visitedCount - 1 : min_position - 1;
-        int indexAfter = min_position + 1;
+        int indexBefore = minN == 0 ? visitedCount - 1 : minN - 1;
+        int indexAfter = minN + 1;
 
         double distanceAfter =
-                distances[tour[min_position]][min_Unvisited_node] + distances[tour[indexAfter]][min_Unvisited_node] -
-                distances[tour[min_position]][tour[indexAfter]];
+                distances[tour[minN]][minUnvisited] + distances[tour[indexAfter]][minUnvisited] -
+                distances[tour[minN]][tour[indexAfter]];
         double distanceBefore =
-                distances[tour[min_position]][min_Unvisited_node] + distances[tour[indexBefore]][min_Unvisited_node] -
-                distances[tour[min_position]][tour[indexBefore]];
+                distances[tour[minN]][minUnvisited] + distances[tour[indexBefore]][minUnvisited] -
+                distances[tour[minN]][tour[indexBefore]];
 
         if (distanceAfter < distanceBefore)
         {
-            min_position = indexAfter;
+            minN = indexAfter;
         }
         else {
-            min_position = indexBefore + 1;
+            minN = indexBefore + 1;
         }
 
         visitedCount++;
-        visited[min_Unvisited_node] = true;
+        visited[minUnvisited] = true;
 
-        for (i = visitedCount; i > min_position; i--) {
+        for (i = visitedCount; i > minN; i--) {
             tour[i] = tour[i - 1];
         }
-        tour[min_position] = min_Unvisited_node;
+        tour[minN] = minUnvisited;
 
 
     }
