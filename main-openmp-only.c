@@ -59,7 +59,6 @@ int main(int argc, char *argv[]){
 
     for(int top = 0; top<numOfCoords; top++)
     {
-
         struct TourData tempTourFarthest  = farthestInsertion(distances, numOfCoords, top);
         int currentTourFarthest = tempTourFarthest.tourSize;
 
@@ -121,6 +120,14 @@ int main(int argc, char *argv[]){
     printf("\nTook %f milliseconds", (tEnd - tStart) * 1000);
     printf("Writing tour to file farthest %s\n", outFileName1);
 
+    printf("\n");
+    printf("Shortest tour Farthest %f", shortestTourArrayFarthest);
+
+    printf("\n");
+    printf("Shortest tour Cheapest %f", shortestTourArrayCheapest);
+
+    printf("\n");
+    printf("Shortest tour Cheapest %f", shortestTourArrayNearest);
 
     if (writeTourToFile(shortestTourArrayFarthest, numOfCoords + 1, outFileName1) == NULL){
         printf("Error");
