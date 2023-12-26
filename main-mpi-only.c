@@ -152,11 +152,9 @@ int main(int argc, char *argv[]){
     }
 
 
-
     double global_min;
     printf(" Total cost before reduce  = %f \n", shortestTourFarthest);
     MPI_Reduce(&shortestTourFarthest, &global_min, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
-
 
     if (myRank == 0)
     {
@@ -194,7 +192,7 @@ int main(int argc, char *argv[]){
 //        free(distanceMatrix[i]);
 //    }
 
-    free(distances);
+//    free(distances);
 //    free(shortestTourArrayCheapest);
 //    free(shortestTourArrayNearest);
 //    free(shortestTourArrayFarthest);
