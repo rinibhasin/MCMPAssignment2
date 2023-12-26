@@ -102,8 +102,8 @@ struct TourData farthestInsertion(double **dMatrix, int numOfCoords, int top){
 		}
 
 		//Find the cost of adding the farthest node to every possible location in the tour. Each thread finds their own.
-		#pragma omp for
         int k;
+		#pragma omp for
 		for(k = 0; k < tourLength - 1; k++){
 			double cost = dMatrix[tour[k]][bestNextNode] + dMatrix[bestNextNode][tour[k + 1]] - dMatrix[tour[k]][tour[k + 1]];
 			if(cost < threadMinCosts[threadID * 8]){
@@ -142,7 +142,7 @@ struct TourData farthestInsertion(double **dMatrix, int numOfCoords, int top){
 	}
 
     double totalLength = 0;
-    int i =0;
+//    int i =0;
     for (i = 0; i <=numOfCoords; i++) {
         printf("%d ", tour[i]);
         if(i>0) {
