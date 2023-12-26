@@ -86,6 +86,7 @@ int main(int argc, char *argv[]){
     if (myRank != 0)
     {
         distanceMatrix = (double **)malloc(numOfCoords * sizeof(double *));
+        int i;
         for (i = 0; i < numOfCoords; i++)
         {
             distanceMatrix[i] = (double *)malloc(numOfCoords * sizeof(double));
@@ -186,9 +187,10 @@ int main(int argc, char *argv[]){
 
 
 //    Free memory
-    for(int i = 0; i < numOfCoords; i++){
-        free(distanceMatrix[i]);
-    }
+
+//    for(int i = 0; i < numOfCoords; i++){
+//        free(distanceMatrix[i]);
+//    }
 
     free(distances);
 //    free(shortestTourArrayCheapest);
