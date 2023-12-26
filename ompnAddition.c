@@ -83,7 +83,7 @@ struct TourData nearestAddition(double **distanceMatrix, int numOfCoords, int st
         int minUnvisited;
         int positionToAdd, position;
 
-        int i=0, j=0;
+        int j=0;
         int threadID;
 
         #pragma omp parallel for collapse(2) private(i, j, threadID) shared(visited, distanceMatrix, minimumAdditionalCosts, positions, nearestNodes)
