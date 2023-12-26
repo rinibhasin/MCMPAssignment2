@@ -156,7 +156,7 @@ struct TourData nearestAddition(double **distanceMatrix, int numOfCoords, int st
     }
 
     double totalLength = 0;
-    int i;
+//    int i;
     for (i = 0; i <=numOfCoords; i++)
     {
         if(i>0)
