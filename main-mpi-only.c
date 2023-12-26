@@ -52,8 +52,8 @@ int main(int argc, char *argv[]){
     double *flattenedDistanceMatrix = NULL;
 
     // Only one the root process will read input file and send data to other MPI processes
-    if (myRank == 0) {
-
+    if (myRank == 0)
+    {
         numOfCoords = readNumOfCoords(filename);
         double **coords = readCoords(filename, numOfCoords);
         distanceMatrix = createDistanceMatrix(coords, numOfCoords);
@@ -68,8 +68,6 @@ int main(int argc, char *argv[]){
                 flattenedDistanceMatrix[count++] = distanceMatrix[i][j];
             }
         }
-
-
     }
 
     // Allocate memory for flattenedDistanceMatrix on all MPI processes except the root node
@@ -97,7 +95,7 @@ int main(int argc, char *argv[]){
             for (j = 0; j < numOfCoords; j++)
             {
                 distanceMatrix[i][j] = flattenedDistanceMatrix[index++];
-                printf("Reshaped matrix : %f\n", distanceMatrix[i][j]);
+//                printf("Reshaped matrix : %f\n", distanceMatrix[i][j]);
             }
         }
     }
