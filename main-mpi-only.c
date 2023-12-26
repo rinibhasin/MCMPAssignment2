@@ -151,6 +151,8 @@ int main(int argc, char *argv[]){
 
     }
 
+
+
     double global_min;
     printf(" Total cost before reduce  = %f \n", shortestTourFarthest);
     MPI_Reduce(&shortestTourFarthest, &global_min, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
