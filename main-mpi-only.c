@@ -159,9 +159,9 @@ int main(int argc, char *argv[]){
     if (myRank == 0)
     {
         printf("Global minimum tour cost: %f\n", global_min);
-        for (i = 0; i < numOfCoords; i++) {
-            free(distanceMatrix[i]);
-        }
+//        for (i = 0; i < numOfCoords; i++) {
+//            free(distanceMatrix[i]);
+//        }
 //        for (i = 0; i < numOfCoords; i++) {
 //            free(coordinates[i]);
 //        }
