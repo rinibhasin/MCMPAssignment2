@@ -20,8 +20,8 @@ void *writeTourToFile(int *tour, int tourLength, char *filename);
 double **createDistanceMatrix(double **coords, int numOfCoords);
 double sqrt(double arg);
 struct TourData farthestInsertion(double **dMatrix, int numOfCoords, int top);
-struct TourData cheapestInsertion(double **dMatrix, int numOfCoords, int top);
-struct TourData nearestAddition(double **distances, int numOfCoords, int startingNode);
+//struct TourData cheapestInsertion(double **dMatrix, int numOfCoords, int top);
+//struct TourData nearestAddition(double **distances, int numOfCoords, int startingNode);
 
 
 int main(int argc, char *argv[]){
@@ -48,7 +48,6 @@ int main(int argc, char *argv[]){
     int numOfCoords = 0;
 
     double **distanceMatrix;
-
     double *flattenedDistanceMatrix = NULL;
 
     // Only one the root process will read input file and send data to other MPI processes
@@ -95,7 +94,7 @@ int main(int argc, char *argv[]){
             for (j = 0; j < numOfCoords; j++)
             {
                 distanceMatrix[i][j] = flattenedDistanceMatrix[index++];
-//                printf("Reshaped matrix : %f\n", distanceMatrix[i][j]);
+               printf("Reshaped matrix : %f\n", distanceMatrix[i][j]);
             }
         }
     }
@@ -174,9 +173,9 @@ int main(int argc, char *argv[]){
     printf("Writing tour to file farthest %s\n", outFileName1);
 
 
-    if (writeTourToFile(shortestTourArrayFarthest, numOfCoords + 1, outFileName1) == NULL){
-        printf("Error");
-    }
+//    if (writeTourToFile(shortestTourArrayFarthest, numOfCoords + 1, outFileName1) == NULL){
+//        printf("Error");
+//    }
 
 
 
