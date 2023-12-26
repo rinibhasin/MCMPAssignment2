@@ -130,7 +130,7 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
         }
 
 
-        // Make space to add unvisited node to computed index
+
 //        for(i = visitedCount; i > minN; i--)
 //        {
 //            tour[i+1] = tour[i];
@@ -145,14 +145,16 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
 //        visitedCount++;
 
         // change this portion
-        visitedCount++;
-        visited[minUnvisited] = true;
 
-        for (i = visitedCount; i > minN; i--) {
+        visitedCount++;
+
+        // Make space to add unvisited node to computed index
+        for (i = visitedCount; i > minN; i--)
+        {
             tour[i] = tour[i - 1];
         }
         tour[minN] = minUnvisited;
-
+        visited[minUnvisited] = true;
 
     }
 
