@@ -47,7 +47,8 @@ struct TourData nearestAddition(double **distanceMatrix, int numOfCoords, int st
     double minimumDistance = DBL_MAX;
 
     // Finding the nearest vertex
-    for (int i = 0; i < numOfCoords; i++)
+    int i;
+    for (i = 0; i < numOfCoords; i++)
     {
         if (!visited[i])
         {
@@ -134,6 +135,8 @@ struct TourData nearestAddition(double **distanceMatrix, int numOfCoords, int st
             minN = indexPrevious + 1;
         }
 
+        visitedCount++;
+
         for (i = visitedCount; i > minN; i--)
         {
             tour[i] = tour[i - 1];
@@ -141,7 +144,6 @@ struct TourData nearestAddition(double **distanceMatrix, int numOfCoords, int st
 
         tour[minN] = minUnvisited;
         visited[minUnvisited] = true;
-        visitedCount++;
     }
 
     struct TourData tourData;

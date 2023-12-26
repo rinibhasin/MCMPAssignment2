@@ -60,6 +60,7 @@ int main(int argc, char *argv[]){
         flattenedDistanceMatrix = (double *)malloc(numOfCoords * numOfCoords * sizeof(double));
 
         int count = 0, j=0;
+        int i;
         for (i = 0; i < numOfCoords; i++)
         {
             for (j = 0; j < numOfCoords; j++)
@@ -186,13 +187,13 @@ int main(int argc, char *argv[]){
 
 //    Free memory
     for(int i = 0; i < numOfCoords; i++){
-        free(distances[i]);
+        free(distanceMatrix[i]);
     }
 
     free(distances);
-    free(shortestTourArrayCheapest);
+//    free(shortestTourArrayCheapest);
 //    free(shortestTourArrayNearest);
-    free(shortestTourArrayFarthest);
+//    free(shortestTourArrayFarthest);
 
 }
 
