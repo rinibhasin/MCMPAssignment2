@@ -44,7 +44,7 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
     int *tour = malloc((numOfCoords + 1) * sizeof(int));
     bool *visited = malloc(numOfCoords * sizeof(bool));
 
-    int p =0;
+    int p=0;
     for(p =0; p< numOfCoords; p++)
     {
      tour[p] = 0;
@@ -170,7 +170,7 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
 
     cost += distances[tour[numOfCoords - 1]][tour[0]];
 
-    tour[numOfCoords + 1] = cost;
+//    tour[numOfCoords + 1] = cost;
     result.tourSize = cost;
 
     return result;
