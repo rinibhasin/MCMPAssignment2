@@ -22,7 +22,8 @@ struct TourData farthestInsertion(double **dMatrix, int numOfCoords, int top){
 	bool *visited = (bool *)calloc(numOfCoords, sizeof(bool));
 
 	//Initialising tour to empty
-	for(int i = 0; i < numOfCoords; i++){
+    int i;
+	for(i = 0; i < numOfCoords; i++){
 		tour[i] = -1;
 	}
 
@@ -71,11 +72,11 @@ struct TourData farthestInsertion(double **dMatrix, int numOfCoords, int top){
 		threadMaxCosts[threadID * 8] = 0;
 		threadNextNode[threadID * 8] = -1;
 		threadInsertPos[threadID * 8] = -1;
-
+        int j;
 		//Begin a workshare construct. Threads divide i and j and work on their respective ones.
 		#pragma omp for collapse(2)
-		for(int i = 0; i < tourLength - 1; i++){
-			for(int j = 0; j < numOfCoords; j++){
+		for(i = 0; i < tourLength - 1; i++){
+			for(j = 0; j < numOfCoords; j++){
 				//Each thread identifies their farthest vertex from a vertex in the tour
 				if(!visited[j]){
 					double cost = dMatrix[tour[i]][j];
@@ -92,19 +93,18 @@ struct TourData farthestInsertion(double **dMatrix, int numOfCoords, int top){
 		#pragma omp single
 		{
 			double maxCost = 0;
-			for(int i = 0; i < numThreads; i++){
+			for(i = 0; i < numThreads; i++){
 				if(threadMaxCosts[i * 8] > maxCost){
 					maxCost = threadMaxCosts[i * 8];
 					bestNextNode = threadNextNode[i * 8];
 				}
 			}
-
-			
 		}
 
 		//Find the cost of adding the farthest node to every possible location in the tour. Each thread finds their own.
 		#pragma omp for
-		for(int k = 0; k < tourLength - 1; k++){
+        int k;
+		for(k = 0; k < tourLength - 1; k++){
 			double cost = dMatrix[tour[k]][bestNextNode] + dMatrix[bestNextNode][tour[k + 1]] - dMatrix[tour[k]][tour[k + 1]];
 			if(cost < threadMinCosts[threadID * 8]){
 				threadMinCosts[threadID * 8] = cost;
@@ -119,7 +119,7 @@ struct TourData farthestInsertion(double **dMatrix, int numOfCoords, int top){
 		double minCost = __DBL_MAX__;
 
 		//Single thread loops through every thread's answer and chooses the cheapest one.
-		for(int i = 0; i < numThreads; i++){
+		for(i = 0; i < numThreads; i++){
 			if(threadMinCosts[i * 8] < minCost){
 				minCost = threadMinCosts[i * 8];
 				bestInsertPos = threadInsertPos[i * 8];
@@ -127,7 +127,7 @@ struct TourData farthestInsertion(double **dMatrix, int numOfCoords, int top){
 		}	
 
 		//Single thread places the bestNextNode in the bestInsertPos
-		for(int i = numOfCoords; i > bestInsertPos; i--){
+		for(i = numOfCoords; i > bestInsertPos; i--){
 			tour[i] = tour[i - 1];
 		}
 
