@@ -44,14 +44,19 @@ int main(int argc, char *argv[]){
     outFileName2 = argv[3];
     outFileName3 = argv[4];
 
+
+    int numOfCoords = 0;
+
+    double **distanceMatrix;
+
     double *flattenedDistanceMatrix = NULL;
 
     // Only one the root process will read input file and send data to other MPI processes
     if (myRank == 0) {
 
-        int numOfCoords = readNumOfCoords(filename);
+        numOfCoords = readNumOfCoords(filename);
         double **coords = readCoords(filename, numOfCoords);
-        double **distances = createDistanceMatrix(coords, numOfCoords);
+        distanceMatrix = createDistanceMatrix(coords, numOfCoords);
         flattenedDistanceMatrix = (double *)malloc(numOfCoords * numOfCoords * sizeof(double));
 
         int count = 0, j=0;
@@ -117,11 +122,12 @@ int main(int argc, char *argv[]){
 
     double tStart = omp_get_wtime();
 
+    int top;
 
-    for(int top = startingCoord; top<endingCoord; top++)
+    for(top = startingCoord; top<endingCoord; top++)
     {
 
-        struct TourData tempTourFarthest  = farthestInsertion(distances, numOfCoords, top);
+        struct TourData tempTourFarthest  = farthestInsertion(distanceMatrix, numOfCoords, top);
         int currentTourFarthest = tempTourFarthest.tourSize;
 
         if(currentTourFarthest < shortestTourFarthest)
@@ -154,13 +160,11 @@ int main(int argc, char *argv[]){
         for (i = 0; i < numOfCoords; i++) {
             free(distanceMatrix[i]);
         }
-        for (i = 0; i < numOfCoords; i++) {
-            free(coordinates[i]);
-        }
+//        for (i = 0; i < numOfCoords; i++) {
+//            free(coordinates[i]);
+//        }
 
-        for (i = 0; i <= numOfCoords; i++) {
-            free(finalarrays[i]);
-        }
+
         free(flattenedDistanceMatrix);
     }
 
@@ -174,19 +178,11 @@ int main(int argc, char *argv[]){
         printf("Error");
     }
 
-    printf("Writing tour to file cheapest%s\n", outFileName2);
 
 
-    if (writeTourToFile(shortestTourArrayCheapest, numOfCoords + 1, outFileName2) == NULL){
-        printf("Error");
-    }
-
-    printf("Writing tour to file nearest %s\n", outFileName3);
 
 
-    if (writeTourToFile(shortestTourArrayNearest, numOfCoords + 1, outFileName3) == NULL){
-        printf("Error");
-    }
+
 
 //    Free memory
     for(int i = 0; i < numOfCoords; i++){

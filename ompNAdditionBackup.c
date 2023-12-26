@@ -44,7 +44,8 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
 
     double minimumDistance = DBL_MAX;
 
-    for (int i = 0; i < numOfCoords; i++)
+    int i;
+    for (i = 0; i < numOfCoords; i++)
     {
         if (!visited[i])
         {
@@ -158,7 +159,7 @@ struct TourData nearestAddition(double **distances, int numOfCoords, int startin
 
     }
 
-    for (int i = 0; i <= numOfCoords; i++) {
+    for (i = 0; i <= numOfCoords; i++) {
         printf("%d ", tour[i]);
         result.tour[i] = tour[i];
     }
