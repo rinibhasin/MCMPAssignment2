@@ -33,8 +33,6 @@ int main(int argc, char *argv[]){
     MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
     MPI_Comm_size(MPI_COMM_WORLD, &commSize);
 
-    TourData localTour;
-
     //Argument setup for file and output
     char *filename;
     char *outFileName1;
@@ -116,7 +114,7 @@ int main(int argc, char *argv[]){
     endingCoord = (endingCoord > numOfCoords) ? numOfCoords : endingCoord;
 
 
-    printf("Going to have a nervous breakdown")
+    printf("Going to have a nervous breakdown");
 
     printf("Comm size : %d\n", commSize);
     printf("Coordinates per process= %d\n", coordsPerProcess);
@@ -173,11 +171,12 @@ int main(int argc, char *argv[]){
     {
         int processId=0, tourId=0;
         double minimumCost = DBL_MAX;
-        int **finalResultFarthest = (int **)malloc(comm_size * sizeof(int *));
+        int **finalResultFarthest = (int **)malloc(commSize * sizeof(int *));
         for (processId = 0; processId < commSize; processId++)
         {
             finalResultFarthest[processId] = (int *)malloc((numOfCoords + 1) * sizeof(int));
             printf("Tour from process %d: ", processId);
+            int i;
             for (i = 0; i <= numOfCoords; i++)
             {
                 finalResultFarthest[processId][i]= gatheredTours[processId * (numOfCoords + 1) + i];
@@ -201,7 +200,7 @@ int main(int argc, char *argv[]){
         }
 
         writeTourToFile(finalResultFarthest[tourId], numOfCoords+1 , nearest_outputfile);
-        for ( processId = 0; p < commSize; processId++)
+        for ( processId = 0; processId < commSize; processId++)
         {
             free(finalResultFarthest[processId]);
         }
