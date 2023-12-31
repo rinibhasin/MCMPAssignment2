@@ -278,6 +278,8 @@ int main(int argc, char *argv[]){
     printf("\nTook %f seconds MPI time", (end - start));
 //    printf("Writing tour to file farthest %s\n", outFileName1);
 
+    MPI_Finalize();
+
 
 
 }
