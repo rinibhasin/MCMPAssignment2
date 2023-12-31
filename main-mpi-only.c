@@ -104,7 +104,7 @@ int main(int argc, char *argv[]){
             for (j = 0; j < numOfCoords; j++)
             {
                 distanceMatrix[i][j] = flattenedDistanceMatrix[index++];
-               printf("Reshaped matrix : %f\n", distanceMatrix[i][j]);
+//               printf("Reshaped matrix : %f\n", distanceMatrix[i][j]);
             }
         }
     }
