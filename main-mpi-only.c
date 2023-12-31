@@ -78,7 +78,8 @@ int main(int argc, char *argv[]){
     MPI_Bcast(&numOfCoords, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
     // Allocate memory for flattenedDistanceMatrix on all MPI processes except the root node
-    if (myRank != 0) {
+    if (myRank != 0)
+    {
         flattenedDistanceMatrix = (double *)malloc(numOfCoords * numOfCoords * sizeof(double));
     }
 
@@ -200,7 +201,7 @@ int main(int argc, char *argv[]){
             printf("%d ", finalResultFarthest[tourId][i]);
         }
 
-        writeTourToFile(finalResultFarthest[tourId], numOfCoords+1 , nearest_outputfile);
+        writeTourToFile(finalResultFarthest[tourId], numOfCoords+1 , outFileName1);
         for ( processId = 0; processId < commSize; processId++)
         {
             free(finalResultFarthest[processId]);
