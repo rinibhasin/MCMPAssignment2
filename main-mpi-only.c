@@ -21,9 +21,7 @@ double sqrt(double arg);
 struct TourData farthestInsertion(double **dMatrix, int numOfCoords, int top);
 struct TourData cheapestInsertion(double **distanceMatrix, int numOfCoords, int top);
 
-//struct TourData cheapestInsertion(double **dMatrix, int numOfCoords, int top);
 //struct TourData nearestAddition(double **distances, int numOfCoords, int startingNode);
-
 
 int main(int argc, char *argv[]){
 
@@ -76,6 +74,8 @@ int main(int argc, char *argv[]){
         }
     }
 
+
+    // Broadcasting value of number of coordinates to all MPI processes
     MPI_Bcast(&numOfCoords, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
     // Allocate memory for flattenedDistanceMatrix on all MPI processes except the root node
@@ -92,26 +92,26 @@ int main(int argc, char *argv[]){
     if (myRank != 0)
     {
         distanceMatrix = (double **)malloc(numOfCoords * sizeof(double *));
-        int i;
+        int i, j;
+        int index = 0;
+
         for (i = 0; i < numOfCoords; i++)
         {
             distanceMatrix[i] = (double *)malloc(numOfCoords * sizeof(double));
         }
 
-        int index = 0,j=0;
         for (i = 0; i < numOfCoords; i++)
         {
             for (j = 0; j < numOfCoords; j++)
             {
                 distanceMatrix[i][j] = flattenedDistanceMatrix[index++];
-//               printf("Reshaped matrix : %f\n", distanceMatrix[i][j]);
             }
         }
     }
 
-    int coordsPerProcess = (numOfCoords + commSize - 1) / commSize; // Ceiling division
+    int coordsPerProcess = (numOfCoords + commSize - 1) / commSize;
 
-    // Dividing the coordinates between different MPI processes
+    // Setting the range of coordinates between different MPI processes as per the rank
     int startingCoord = myRank * coordsPerProcess;
     int endingCoord = (myRank + 1) * coordsPerProcess;
     endingCoord = (endingCoord > numOfCoords) ? numOfCoords : endingCoord;
@@ -157,8 +157,8 @@ int main(int argc, char *argv[]){
             }
         }
 
-        printf(" Total cost = %f \n",tempTourFarthest.tourSize);
-        printf("Rank %d: Finished processing starting coordinate = %d\n", myRank, top);
+//        printf(" Total cost = %f \n",tempTourFarthest.tourSize);
+//        printf("Rank %d: Finished processing starting coordinate = %d\n", myRank, top);
 
 
         struct TourData tempTourCheapest  = cheapestInsertion(distanceMatrix, numOfCoords, top);
@@ -177,8 +177,8 @@ int main(int argc, char *argv[]){
             }
         }
 
-        printf(" Total cost = %f \n",tempTourFarthest.tourSize);
-        printf("Rank %d: Finished processing starting coordinate = %d\n", myRank, top);
+//        printf(" Total cost = %f \n",tempTourFarthest.tourSize);
+//        printf("Rank %d: Finished processing starting coordinate = %d\n", myRank, top);
     }
 
 
@@ -206,8 +206,9 @@ int main(int argc, char *argv[]){
 
     if (myRank == 0)
     {
-        int processId=0, tourIdFarthest=0;
+        int processId=0;
         int tourIdCheapest=0;
+        int tourIdFarthest=0;
 
         double minimumCostFarthest = DBL_MAX;
         double minimumCostCheapest = DBL_MAX;
@@ -221,14 +222,11 @@ int main(int argc, char *argv[]){
             finalResultFarthest[processId] = (int *)malloc((numOfCoords + 1) * sizeof(int));
             finalResultCheapest[processId] = (int *)malloc((numOfCoords + 1) * sizeof(int));
 
-            printf("Tour from process %d: ", processId);
             int i;
             for (i = 0; i <= numOfCoords; i++)
             {
                 finalResultFarthest[processId][i] = gatheredToursFarthest[processId * (numOfCoords + 1) + i];
                 finalResultCheapest[processId][i] = gatheredToursCheapest[processId * (numOfCoords + 1) + i];
-
-                printf("%d ", finalResultFarthest[processId][i]);
             }
 
             if (gatheredTourCostsFarthest[processId] < minimumCostFarthest ||
@@ -280,10 +278,6 @@ int main(int argc, char *argv[]){
     printf("\nTook %f seconds MPI time", (end - start));
     printf("Writing tour to file farthest %s\n", outFileName1);
 
-
-//    if (writeTourToFile(shortestTourArrayFarthest, numOfCoords + 1, outFileName1) == NULL){
-//        printf("Error");
-//    }
 
 
 }
