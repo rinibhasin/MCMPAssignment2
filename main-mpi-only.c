@@ -257,7 +257,7 @@ int main(int argc, char *argv[]){
         }
 
         writeTourToFile(finalResultFarthest[tourIdFarthest], numOfCoords+1 , outFileName1);
-        writeTourToFile(finalResultCheapest[tourIdCheapest], numOfCoords+1 , outFileName1);
+        writeTourToFile(finalResultCheapest[tourIdCheapest], numOfCoords+1 , outFileName2);
 
         for (processId = 0; processId < commSize; processId++)
         {
