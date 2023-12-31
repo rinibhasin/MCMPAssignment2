@@ -276,7 +276,7 @@ int main(int argc, char *argv[]){
 
     printf("\nTook %f milliseconds", (tEnd - tStart) * 1000);
     printf("\nTook %f seconds MPI time", (end - start));
-    printf("Writing tour to file farthest %s\n", outFileName1);
+//    printf("Writing tour to file farthest %s\n", outFileName1);
 
 
 
