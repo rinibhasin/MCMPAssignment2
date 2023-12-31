@@ -33,6 +33,8 @@ int main(int argc, char *argv[]){
     MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
     MPI_Comm_size(MPI_COMM_WORLD, &commSize);
 
+    TourData localTour;
+
     //Argument setup for file and output
     char *filename;
     char *outFileName1;
@@ -55,11 +57,17 @@ int main(int argc, char *argv[]){
     {
         numOfCoords = readNumOfCoords(filename);
         double **coords = readCoords(filename, numOfCoords);
+
+        distanceMatrix = (double **)malloc(numOfCoords * sizeof(double *));
+        int i = 0;
+        for (i = 0; i < numOfCoords; i++) {
+            distanceMatrix[i] = (double *) malloc(numOfCoords * sizeof(double));
+        }
         distanceMatrix = createDistanceMatrix(coords, numOfCoords);
         flattenedDistanceMatrix = (double *)malloc(numOfCoords * numOfCoords * sizeof(double));
 
         int count = 0, j=0;
-        int i;
+
         for (i = 0; i < numOfCoords; i++)
         {
             for (j = 0; j < numOfCoords; j++)
@@ -69,13 +77,14 @@ int main(int argc, char *argv[]){
         }
     }
 
+    MPI_Bcast(&numOfCoords, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
     // Allocate memory for flattenedDistanceMatrix on all MPI processes except the root node
     if (myRank != 0) {
         flattenedDistanceMatrix = (double *)malloc(numOfCoords * numOfCoords * sizeof(double));
     }
 
     // Broadcast the value of numOfCoords to all processes
-    MPI_Bcast(&numOfCoords, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(flattenedDistanceMatrix, numOfCoords * numOfCoords, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
 
@@ -106,7 +115,10 @@ int main(int argc, char *argv[]){
     int endingCoord = (myRank + 1) * coordsPerProcess;
     endingCoord = (endingCoord > numOfCoords) ? numOfCoords : endingCoord;
 
-    printf("Commsize : %d\n", commSize);
+
+    printf("Going to have a nervous breakdown")
+
+    printf("Comm size : %d\n", commSize);
     printf("Coordinates per process= %d\n", coordsPerProcess);
     printf("Starting coordinate  : %d\n", startingCoord);
     printf("Ending coordinate : %d\n", endingCoord);
@@ -125,7 +137,6 @@ int main(int argc, char *argv[]){
 
     for(top = startingCoord; top<endingCoord; top++)
     {
-
         struct TourData tempTourFarthest  = farthestInsertion(distanceMatrix, numOfCoords, top);
         int currentTourFarthest = tempTourFarthest.tourSize;
 
@@ -143,29 +154,60 @@ int main(int argc, char *argv[]){
         }
 
         printf(" Total cost = %f \n",tempTourFarthest.tourSize);
-        printf("Rank %d: Finished processing starting corrdinate = %d\n", myRank, top);
-
-
+        printf("Rank %d: Finished processing starting coordinate = %d\n", myRank, top);
     }
 
 
-    double global_min;
-    printf(" Total cost before reduce  = %f \n", shortestTourFarthest);
-    MPI_Reduce(&shortestTourFarthest, &global_min, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
+    int *gatheredTours = NULL;
+    double *gatheredTourCosts = NULL;
+    if (myRank == 0)
+    {
+        gatheredTours = (int *)malloc(commSize * (numOfCoords + 1) * sizeof(int));
+        gatheredTourCosts = (double *)malloc(commSize * sizeof(double));
+    }
+
+    MPI_Gather(shortestTourArrayFarthest, numOfCoords + 1, MPI_INT, gatheredTours, numOfCoords + 1, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Gather(&shortestTourFarthest, 1, MPI_DOUBLE, gatheredTourCosts, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     if (myRank == 0)
     {
-        printf("Global minimum tour cost: %f\n", global_min);
-//        for (i = 0; i < numOfCoords; i++) {
-//            free(distanceMatrix[i]);
-//        }
-//        for (i = 0; i < numOfCoords; i++) {
-//            free(coordinates[i]);
-//        }
+        int processId=0, tourId=0;
+        double minimumCost = DBL_MAX;
+        int **finalResultFarthest = (int **)malloc(comm_size * sizeof(int *));
+        for (processId = 0; processId < commSize; processId++)
+        {
+            finalResultFarthest[processId] = (int *)malloc((numOfCoords + 1) * sizeof(int));
+            printf("Tour from process %d: ", processId);
+            for (i = 0; i <= numOfCoords; i++)
+            {
+                finalResultFarthest[processId][i]= gatheredTours[processId * (numOfCoords + 1) + i];
+                printf("%d ", finalResultFarthest[processId][i]);
+            }
 
+            if (gatheredTourCosts[processId] < minimumCost ||
+                (gatheredTourCosts[processId] == minimumCost &&
+                finalResultFarthest[processId][0] < finalResultFarthest[tourId][0]))
+            {
+                minimumCost = gatheredTourCosts[processId];
+                tourId = processId;
+            }
+        }
 
-        free(flattenedDistanceMatrix);
+        printf("Tour id : %d\n", tourId);
+        printf("Cost: %f\n", minimumCost);
+        for (i = 0; i <= numOfCoords; i++)
+        {
+            printf("%d ", finalResultFarthest[tourId][i]);
+        }
+
+        writeTourToFile(finalResultFarthest[tourId], numOfCoords+1 , nearest_outputfile);
+        for ( processId = 0; p < commSize; processId++)
+        {
+            free(finalResultFarthest[processId]);
+        }
+        free(finalResultFarthest);
     }
+
 
     double tEnd = omp_get_wtime();
 
