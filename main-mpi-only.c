@@ -173,7 +173,7 @@ int main(int argc, char *argv[]){
             for(copy =0; copy <numOfCoords+1; copy++)
             {
 
-                shortestTourCheapest[copy] = tempTourCheapest.tour[copy];
+                shortestTourArrayCheapest[copy] = tempTourCheapest.tour[copy];
             }
         }
 
@@ -207,7 +207,7 @@ int main(int argc, char *argv[]){
     if (myRank == 0)
     {
         int processId=0, tourIdFarthest=0;
-        int processId=0, tourIdCheapest=0;
+        int tourIdCheapest=0;
         double minimumCostFarthest = DBL_MAX;
         double minimumCostCheapest = DBL_MAX;
 
