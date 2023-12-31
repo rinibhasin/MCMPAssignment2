@@ -194,6 +194,7 @@ int main(int argc, char *argv[]){
 
         printf("Tour id : %d\n", tourId);
         printf("Cost: %f\n", minimumCost);
+        int i;
         for (i = 0; i <= numOfCoords; i++)
         {
             printf("%d ", finalResultFarthest[tourId][i]);
