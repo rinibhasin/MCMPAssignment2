@@ -169,11 +169,11 @@ int main(int argc, char *argv[]){
 
             shortestTourCheapest = currentTourCheapest;
             // Copying the array to keep track to write to output file later
-            int copy=0;
-            for(copy =0; copy <numOfCoords+1; copy++)
+            int copy1=0;
+            for(copy1 =0; copy1 <numOfCoords+1; copy1++)
             {
 
-                shortestTourArrayCheapest[copy] = tempTourCheapest.tour[copy];
+                shortestTourArrayCheapest[copy1] = tempTourCheapest.tour[copy1];
             }
         }
 
@@ -208,6 +208,7 @@ int main(int argc, char *argv[]){
     {
         int processId=0, tourIdFarthest=0;
         int tourIdCheapest=0;
+
         double minimumCostFarthest = DBL_MAX;
         double minimumCostCheapest = DBL_MAX;
 
@@ -238,7 +239,7 @@ int main(int argc, char *argv[]){
                 tourIdFarthest = processId;
             }
 
-            if (gatheredToursCheapest[processId] < minimumCostCheapest ||
+            if (gatheredTourCostsCheapest[processId] < minimumCostCheapest ||
                 (gatheredTourCostsCheapest[processId] == minimumCostCheapest &&
                  finalResultCheapest[processId][0] < finalResultCheapest[tourIdCheapest][0]))
             {
