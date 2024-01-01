@@ -259,25 +259,19 @@ int main(int argc, char *argv[]){
                 finalResultNearest[processId][i] = gatheredToursNearest[processId * (numOfCoords + 1) + i];
             }
 
-            if (gatheredTourCostsFarthest[processId] < minimumCostFarthest ||
-                (gatheredTourCostsFarthest[processId] == minimumCostFarthest &&
-                finalResultFarthest[processId][0] < finalResultFarthest[tourIdFarthest][0]))
+            if (gatheredTourCostsFarthest[processId] < minimumCostFarthest)
             {
                 minimumCostFarthest = gatheredTourCostsFarthest[processId];
                 tourIdFarthest = processId;
             }
 
-            if (gatheredTourCostsCheapest[processId] < minimumCostCheapest ||
-                (gatheredTourCostsCheapest[processId] == minimumCostCheapest &&
-                 finalResultCheapest[processId][0] < finalResultCheapest[tourIdCheapest][0]))
+            if (gatheredTourCostsCheapest[processId] < minimumCostCheapest)
             {
                 minimumCostCheapest = gatheredTourCostsCheapest[processId];
                 tourIdCheapest = processId;
             }
 
-            if (gatheredTourCostsNearest[processId] < minimumCostNearest ||
-                (gatheredTourCostsNearest[processId] == minimumCostNearest &&
-                 finalResultNearest[processId][0] < finalResultNearest[tourIdNearest][0]))
+            if (gatheredTourCostsNearest[processId] < minimumCostNearest)
             {
                 minimumCostNearest = gatheredTourCostsNearest[processId];
                 tourIdNearest = processId;
