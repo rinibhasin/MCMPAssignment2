@@ -278,12 +278,12 @@ int main(int argc, char *argv[]){
         printf("Tour id farthest : %d\n", tourIdFarthest);
         printf("Cost: %f\n", minimumCostFarthest);
         int i;
-        for (i = 0; i <= numOfCoords; i++)
-        {
-            printf("%d ", finalResultFarthest[tourIdFarthest][i]);
-            printf("%d ", finalResultCheapest[tourIdCheapest][i]);
-            printf("%d ", finalResultNearest[tourIdNearest][i]);
-        }
+//        for (i = 0; i <= numOfCoords; i++)
+//        {
+//            printf("%d ", finalResultFarthest[tourIdFarthest][i]);
+//            printf("%d ", finalResultCheapest[tourIdCheapest][i]);
+//            printf("%d ", finalResultNearest[tourIdNearest][i]);
+//        }
 
         double tEnd = omp_get_wtime();
 
