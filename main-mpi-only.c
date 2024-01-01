@@ -20,6 +20,8 @@ double **createDistanceMatrix(double **coords, int numOfCoords);
 double sqrt(double arg);
 struct TourData farthestInsertion(double **dMatrix, int numOfCoords, int top);
 struct TourData cheapestInsertion(double **distanceMatrix, int numOfCoords, int top);
+struct TourData nearestAddition(double **distanceMatrix, int numOfCoords, int top);
+
 
 //struct TourData nearestAddition(double **distances, int numOfCoords, int startingNode);
 
@@ -87,7 +89,6 @@ int main(int argc, char *argv[]){
     // Broadcast the value of numOfCoords to all processes
     MPI_Bcast(flattenedDistanceMatrix, numOfCoords * numOfCoords, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-
     // Reshape the distance matrix
     if (myRank != 0)
     {
@@ -128,9 +129,12 @@ int main(int argc, char *argv[]){
     // Variables for storing the shortest tour for each implementations and the corrresponding tour arrays
     double shortestTourFarthest = DBL_MAX;
     double shortestTourCheapest = DBL_MAX;
+    double shortestTourNearest = DBL_MAX;
+
 
     int *shortestTourArrayFarthest =  (int *)malloc((numOfCoords+1) * sizeof(int *));
     int *shortestTourArrayCheapest =  (int *)malloc((numOfCoords+1) * sizeof(int *));
+    int *shortestTourArrayNearest =  (int *)malloc((numOfCoords+1) * sizeof(int *));
 
 
     double tStart = omp_get_wtime();
@@ -157,10 +161,6 @@ int main(int argc, char *argv[]){
             }
         }
 
-//        printf(" Total cost = %f \n",tempTourFarthest.tourSize);
-//        printf("Rank %d: Finished processing starting coordinate = %d\n", myRank, top);
-
-
         struct TourData tempTourCheapest  = cheapestInsertion(distanceMatrix, numOfCoords, top);
         int currentTourCheapest = tempTourCheapest.tourSize;
 
@@ -177,8 +177,23 @@ int main(int argc, char *argv[]){
             }
         }
 
-//        printf(" Total cost = %f \n",tempTourFarthest.tourSize);
-//        printf("Rank %d: Finished processing starting coordinate = %d\n", myRank, top);
+
+        struct TourData tempTourNearest  = nearestAddition(distanceMatrix, numOfCoords, top);
+        int currentTourNearest = tempTourNearest.tourSize;
+
+        if(currentTourNearest < shortestTourNearest)
+        {
+
+            shortestTourNearest = currentTourNearest;
+            // Copying the array to keep track to write to output file later
+            int copy2=0;
+            for(copy2 =0; copy2 <numOfCoords+1; copy2++)
+            {
+
+                shortestTourArrayNearest[copy2] = tempTourNearest.tour[copy2];
+            }
+        }
+
     }
 
 
@@ -188,6 +203,9 @@ int main(int argc, char *argv[]){
     int *gatheredToursCheapest = NULL;
     double *gatheredTourCostsCheapest = NULL;
 
+    int *gatheredToursNearest = NULL;
+    double *gatheredTourCostsNearest = NULL;
+
     if (myRank == 0)
     {
         gatheredToursFarthest = (int *)malloc(commSize * (numOfCoords + 1) * sizeof(int));
@@ -195,6 +213,9 @@ int main(int argc, char *argv[]){
 
         gatheredToursCheapest = (int *)malloc(commSize * (numOfCoords + 1) * sizeof(int));
         gatheredTourCostsCheapest = (double *)malloc(commSize * sizeof(double));
+
+        gatheredToursNearest = (int *)malloc(commSize * (numOfCoords + 1) * sizeof(int));
+        gatheredTourCostsNearest = (double *)malloc(commSize * sizeof(double));
     }
 
     MPI_Gather(shortestTourArrayFarthest, numOfCoords + 1, MPI_INT, gatheredToursFarthest, numOfCoords + 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -204,29 +225,38 @@ int main(int argc, char *argv[]){
     MPI_Gather(shortestTourArrayCheapest, numOfCoords + 1, MPI_INT, gatheredToursCheapest, numOfCoords + 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Gather(&shortestTourCheapest, 1, MPI_DOUBLE, gatheredTourCostsCheapest, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
+
+    MPI_Gather(shortestTourArrayNearest, numOfCoords + 1, MPI_INT, gatheredToursNearest, numOfCoords + 1, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Gather(&shortestTourNearest, 1, MPI_DOUBLE, gatheredTourCostsNearest, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
     if (myRank == 0)
     {
         int processId=0;
         int tourIdCheapest=0;
         int tourIdFarthest=0;
+        int tourIdNearest=0;
 
         double minimumCostFarthest = DBL_MAX;
         double minimumCostCheapest = DBL_MAX;
+        double minimumCostNearest = DBL_MAX;
 
         int **finalResultFarthest = (int **)malloc(commSize * sizeof(int *));
         int **finalResultCheapest = (int **)malloc(commSize * sizeof(int *));
+        int **finalResultNearest = (int **)malloc(commSize * sizeof(int *));
 
 
         for (processId = 0; processId < commSize; processId++)
         {
             finalResultFarthest[processId] = (int *)malloc((numOfCoords + 1) * sizeof(int));
             finalResultCheapest[processId] = (int *)malloc((numOfCoords + 1) * sizeof(int));
+            finalResultNearest[processId] = (int *)malloc((numOfCoords + 1) * sizeof(int));
 
             int i;
             for (i = 0; i <= numOfCoords; i++)
             {
                 finalResultFarthest[processId][i] = gatheredToursFarthest[processId * (numOfCoords + 1) + i];
                 finalResultCheapest[processId][i] = gatheredToursCheapest[processId * (numOfCoords + 1) + i];
+                finalResultNearest[processId][i] = gatheredToursNearest[processId * (numOfCoords + 1) + i];
             }
 
             if (gatheredTourCostsFarthest[processId] < minimumCostFarthest ||
@@ -244,6 +274,14 @@ int main(int argc, char *argv[]){
                 minimumCostCheapest = gatheredTourCostsCheapest[processId];
                 tourIdCheapest = processId;
             }
+
+            if (gatheredTourCostsNearest[processId] < minimumCostNearest ||
+                (gatheredTourCostsNearest[processId] == minimumCostNearest &&
+                 finalResultNearest[processId][0] < finalResultNearest[tourIdNearest][0]))
+            {
+                minimumCostNearest = gatheredTourCostsNearest[processId];
+                tourIdNearest = processId;
+            }
         }
 
         printf("Tour id farthest : %d\n", tourIdFarthest);
@@ -253,19 +291,23 @@ int main(int argc, char *argv[]){
         {
             printf("%d ", finalResultFarthest[tourIdFarthest][i]);
             printf("%d ", finalResultCheapest[tourIdCheapest][i]);
+            printf("%d ", finalResultNearest[tourIdNearest][i]);
         }
 
         writeTourToFile(finalResultFarthest[tourIdFarthest], numOfCoords+1 , outFileName1);
         writeTourToFile(finalResultCheapest[tourIdCheapest], numOfCoords+1 , outFileName2);
+        writeTourToFile(finalResultNearest[tourIdCheapest], numOfCoords+1 , outFileName3);
 
         for (processId = 0; processId < commSize; processId++)
         {
             free(finalResultFarthest[processId]);
             free(finalResultCheapest[processId]);
+            free(finalResultNearest[processId]);
         }
 
         free(finalResultFarthest);
         free(finalResultCheapest);
+        free(finalResultNearest);
 
     }
 
@@ -276,11 +318,8 @@ int main(int argc, char *argv[]){
 
     printf("\nTook %f milliseconds", (tEnd - tStart) * 1000);
     printf("\nTook %f seconds MPI time", (end - start));
-//    printf("Writing tour to file farthest %s\n", outFileName1);
 
     MPI_Finalize();
-
-
 
 }
 
