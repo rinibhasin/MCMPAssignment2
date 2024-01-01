@@ -129,14 +129,17 @@ int main(int argc, char *argv[]){
     printf("\n");
     printf("Shortest tour Cheapest %f", shortestTourArrayNearest);
 
-    if (writeTourToFile(shortestTourArrayFarthest, numOfCoords + 1, outFileName1) == NULL){
-        printf("Error");
-    }
+
 
     printf("Writing tour to file cheapest%s\n", outFileName2);
 
 
-    if (writeTourToFile(shortestTourArrayCheapest, numOfCoords + 1, outFileName2) == NULL){
+    if (writeTourToFile(shortestTourArrayCheapest, numOfCoords + 1, outFileName1) == NULL){
+        printf("Error");
+    }
+
+
+    if (writeTourToFile(shortestTourArrayFarthest, numOfCoords + 1, outFileName2) == NULL){
         printf("Error");
     }
 
