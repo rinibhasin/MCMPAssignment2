@@ -237,63 +237,39 @@ int main(int argc, char *argv[]){
         int **finalResultNearest = (int **)malloc(commSize * sizeof(int *));
 
 
-        int pid= 0;
+        for (processId = 0; processId < commSize; processId++)
+        {
+            finalResultFarthest[processId] = (int *)malloc((numOfCoords + 1) * sizeof(int));
+            finalResultCheapest[processId] = (int *)malloc((numOfCoords + 1) * sizeof(int));
+            finalResultNearest[processId] = (int *)malloc((numOfCoords + 1) * sizeof(int));
 
-        for (processId = 0; processId < commSize; processId++) {
-
-            double currentCost = gatheredTourCostsFarthest[processId];
-            if(currentCost < minimumCostFarthest)
+            int i;
+            for (i = 0; i <= numOfCoords; i++)
             {
-                minimumCostFarthest = currentCost;
-                pid = processId;
+                finalResultFarthest[processId][i] = gatheredToursFarthest[processId * (numOfCoords + 1) + i];
+                finalResultCheapest[processId][i] = gatheredToursCheapest[processId * (numOfCoords + 1) + i];
+                finalResultNearest[processId][i] = gatheredToursNearest[processId * (numOfCoords + 1) + i];
+            }
+
+            if (gatheredTourCostsFarthest[processId] < minimumCostFarthest)
+            {
+                minimumCostFarthest = gatheredTourCostsFarthest[processId];
+                tourIdFarthest = processId;
+            }
+
+            if (gatheredTourCostsCheapest[processId] < minimumCostCheapest)
+            {
+                minimumCostCheapest = gatheredTourCostsCheapest[processId];
+                tourIdCheapest = processId;
+            }
+
+            if (gatheredTourCostsNearest[processId] < minimumCostNearest)
+            {
+                minimumCostNearest = gatheredTourCostsNearest[processId];
+                tourIdNearest = processId;
             }
         }
 
-        // get tour
-        int k =0;
-        int *tourFarthest = (int *)malloc(commSize * sizeof(int *));
-        for(k = 0; k < numOfCoords+1; k++)
-        {
-            int startIndex = numOfCoords*pid+1;
-            tourFarthest[k] = gatheredToursFarthest[startIndex++];
-        }
-
-
-//        for (processId = 0; processId < commSize; processId++)
-//        {
-//            finalResultFarthest[processId] = (int *)malloc((numOfCoords + 1) * sizeof(int));
-//            finalResultCheapest[processId] = (int *)malloc((numOfCoords + 1) * sizeof(int));
-//            finalResultNearest[processId] = (int *)malloc((numOfCoords + 1) * sizeof(int));
-//
-//            int i;
-//            for (i = 0; i <= numOfCoords; i++)
-//            {
-//                finalResultFarthest[processId][i] = gatheredToursFarthest[processId * (numOfCoords + 1) + i];
-//                finalResultCheapest[processId][i] = gatheredToursCheapest[processId * (numOfCoords + 1) + i];
-//                finalResultNearest[processId][i] = gatheredToursNearest[processId * (numOfCoords + 1) + i];
-//            }
-//
-//            if (gatheredTourCostsFarthest[processId] < minimumCostFarthest)
-//            {
-//                minimumCostFarthest = gatheredTourCostsFarthest[processId];
-//                tourIdFarthest = processId;
-//            }
-//
-//            if (gatheredTourCostsCheapest[processId] < minimumCostCheapest)
-//            {
-//                minimumCostCheapest = gatheredTourCostsCheapest[processId];
-//                tourIdCheapest = processId;
-//            }
-//
-//            if (gatheredTourCostsNearest[processId] < minimumCostNearest)
-//            {
-//                minimumCostNearest = gatheredTourCostsNearest[processId];
-//                tourIdNearest = processId;
-//            }
-//        }
-
-        printf("Tour id farthest : %d\n", tourIdFarthest);
-        printf("Cost: %f\n", minimumCostFarthest);
 //        for (i = 0; i <= numOfCoords; i++)
 //        {
 //            printf("%d ", finalResultFarthest[tourIdFarthest][i]);
@@ -308,9 +284,9 @@ int main(int argc, char *argv[]){
         printf("\nTook %f milliseconds", (tEnd - tStart) * 1000);
         printf("\nTook %f seconds MPI time", (end - start));
 
-        writeTourToFile(tourFarthest, numOfCoords+1 , outFileName1);
-//        writeTourToFile(finalResultCheapest[tourIdCheapest], numOfCoords+1 , outFileName2);
-//        writeTourToFile(finalResultNearest[tourIdCheapest], numOfCoords+1 , outFileName3);
+        writeTourToFile(finalResultCheapest[tourIdFarthest], numOfCoords+1 , outFileName1);
+        writeTourToFile(finalResultCheapest[tourIdCheapest], numOfCoords+1 , outFileName2);
+        writeTourToFile(finalResultNearest[tourIdCheapest], numOfCoords+1 , outFileName3);
 
         for (processId = 0; processId < commSize; processId++)
         {
