@@ -254,7 +254,7 @@ int main(int argc, char *argv[]){
         int *tourFarthest = (int *)malloc(commSize * sizeof(int *));
         for(k = 0; k < numOfCoords+1; k++)
         {
-            int startIndex = numOfCoords*processId;
+            int startIndex = numOfCoords*pid;
             tourFarthest[k] = gatheredToursFarthest[startIndex++];
         }
 
