@@ -1,0 +1,32 @@
+# Compiler options
+CC = gcc
+MPICC = mpicc
+ICC = icc
+OPTFLAG = -O3
+CFLAGS = -std=c99
+LDFLAGS = -lm
+
+# Source files
+SERIAL_SOURCES = main-openmp-only.c coordReader.c ompcInsertion.c ompfInsertion.c ompnAddition.c
+MPI_SOURCES = main-mpi.c coordReader.c ompcInsertion.c ompfInsertion.c ompnAddition.c
+
+# Output executables
+GSERIAL = gomp-only
+GCOMPLETE = gcomplete
+ISERIAL = iserial
+ICOMPLETE = icomplete
+
+# Targets
+all: $(GSERIAL) $(GCOMPLETE) $(ISERIAL) $(ICOMPLETE)
+
+$(GSERIAL): $(SERIAL_SOURCES)
+    $(CC) $(OPTFLAG) -fopenmp $(CFLAGS) $(SERIAL_SOURCES) -o $(GSERIAL) $(LDFLAGS)
+
+$(GCOMPLETE): $(MPI_SOURCES)
+    $(MPICC) $(OPTFLAG) -fopenmp $(CFLAGS) $(MPI_SOURCES) -o $(GCOMPLETE) $(LDFLAGS)
+
+$(ISERIAL): $(SERIAL_SOURCES)
+    $(ICC) $(OPTFLAG) -qopenmp $(CFLAGS) $(SERIAL_SOURCES) -o $(ISERIAL) $(LDFLAGS)
+
+$(ICOMPLETE): $(MPI_SOURCES)
+    $(MPICC) $(OPTFLAG) -qopenmp $(CFLAGS) $(MPI_SOURCES) -o $(ICOMPLETE) $(LDFLAGS)

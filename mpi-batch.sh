@@ -20,7 +20,7 @@ module load mpi/intel-mpi/2019u5/bin
 
 
 #ADD COMPILER INSTRUCTION HERE.
-mpicc -fopenmp main-mpi-only.c coordReader.c ompnAddition.c -lm
+mpicc -fopenmp -O3 main-mpi-only.c coordReader.c ompnAddition.c -lm
 
 
 #SLURM_NTASKS is given by the -n flag when using sbatch.
