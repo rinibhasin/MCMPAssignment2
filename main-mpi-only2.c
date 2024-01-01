@@ -255,7 +255,7 @@ int main(int argc, char *argv[]){
         for(k = 0; k < numOfCoords+1; k++)
         {
             int startIndex = numOfCoords*processId;
-            finalResultFarthest[k] = gatheredToursFarthest[startIndex++];
+            tourFarthest[k] = gatheredToursFarthest[startIndex++];
         }
 
 
