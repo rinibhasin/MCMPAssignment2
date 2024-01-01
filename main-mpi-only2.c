@@ -138,11 +138,9 @@ int main(int argc, char *argv[]){
 
     int top;
 
-
     // For each MPI process the startingCoord and endingCoord will be different
     for(top = startingCoord; top < endingCoord; top++)
     {
-
         struct TourData tempTourFarthest  = farthestInsertion(distanceMatrix, numOfCoords, top);
         int currentTourFarthest = tempTourFarthest.tourSize;
 
@@ -191,7 +189,6 @@ int main(int argc, char *argv[]){
                 shortestTourArrayNearest[copy2] = tempTourNearest.tour[copy2];
             }
         }
-
     }
 
 
@@ -288,6 +285,13 @@ int main(int argc, char *argv[]){
             printf("%d ", finalResultNearest[tourIdNearest][i]);
         }
 
+        double tEnd = omp_get_wtime();
+
+        double end = MPI_Wtime();
+
+        printf("\nTook %f milliseconds", (tEnd - tStart) * 1000);
+        printf("\nTook %f seconds MPI time", (end - start));
+
         writeTourToFile(finalResultFarthest[tourIdFarthest], numOfCoords+1 , outFileName1);
         writeTourToFile(finalResultCheapest[tourIdCheapest], numOfCoords+1 , outFileName2);
         writeTourToFile(finalResultNearest[tourIdCheapest], numOfCoords+1 , outFileName3);
@@ -306,12 +310,7 @@ int main(int argc, char *argv[]){
     }
 
 
-    double tEnd = omp_get_wtime();
 
-    double end = MPI_Wtime();
-
-    printf("\nTook %f milliseconds", (tEnd - tStart) * 1000);
-    printf("\nTook %f seconds MPI time", (end - start));
 
     MPI_Finalize();
 
