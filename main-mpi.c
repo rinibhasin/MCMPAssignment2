@@ -117,6 +117,11 @@ int main(int argc, char *argv[]){
 
     printf("Going to have a nervous breakdown");
 
+    printf("Comm size : %d\n", commSize);
+    printf("Coordinates per process= %d\n", coordsPerProcess);
+    printf("Starting coordinate  : %d\n", startingCoord);
+    printf("Ending coordinate : %d\n", endingCoord);
+
 
     // Variables to track the shortest tours
     double shortestTourFarthest = DBL_MAX;
@@ -133,9 +138,11 @@ int main(int argc, char *argv[]){
 
     int top;
 
+
     // For each MPI process the startingCoord and endingCoord will be different
     for(top = startingCoord; top < endingCoord; top++)
     {
+
         struct TourData tempTourFarthest  = farthestInsertion(distanceMatrix, numOfCoords, top);
         int currentTourFarthest = tempTourFarthest.tourSize;
 
@@ -184,6 +191,7 @@ int main(int argc, char *argv[]){
                 shortestTourArrayNearest[copy2] = tempTourNearest.tour[copy2];
             }
         }
+
     }
 
 
@@ -251,31 +259,30 @@ int main(int argc, char *argv[]){
                 finalResultNearest[processId][i] = gatheredToursNearest[processId * (numOfCoords + 1) + i];
             }
 
-            if (gatheredTourCostsFarthest[processId] < minimumCostFarthest)
+            if (gatheredTourCostsFarthest[processId] < minimumCostFarthest ||
+                (gatheredTourCostsFarthest[processId] == minimumCostFarthest &&
+                 finalResultFarthest[processId][0] < finalResultFarthest[tourIdFarthest][0]))
             {
                 minimumCostFarthest = gatheredTourCostsFarthest[processId];
                 tourIdFarthest = processId;
             }
 
-            if (gatheredTourCostsCheapest[processId] < minimumCostCheapest)
+            if (gatheredTourCostsCheapest[processId] < minimumCostCheapest ||
+                (gatheredTourCostsCheapest[processId] == minimumCostCheapest &&
+                 finalResultCheapest[processId][0] < finalResultCheapest[tourIdCheapest][0]))
             {
                 minimumCostCheapest = gatheredTourCostsCheapest[processId];
                 tourIdCheapest = processId;
             }
 
-            if (gatheredTourCostsNearest[processId] < minimumCostNearest)
+            if (gatheredTourCostsNearest[processId] < minimumCostNearest ||
+                (gatheredTourCostsNearest[processId] == minimumCostNearest &&
+                 finalResultNearest[processId][0] < finalResultNearest[tourIdNearest][0]))
             {
                 minimumCostNearest = gatheredTourCostsNearest[processId];
                 tourIdNearest = processId;
             }
         }
-
-//        for (i = 0; i <= numOfCoords; i++)
-//        {
-//            printf("%d ", finalResultFarthest[tourIdFarthest][i]);
-//            printf("%d ", finalResultCheapest[tourIdCheapest][i]);
-//            printf("%d ", finalResultNearest[tourIdNearest][i]);
-//        }
 
         double tEnd = omp_get_wtime();
 
@@ -284,9 +291,20 @@ int main(int argc, char *argv[]){
         printf("\nTook %f milliseconds", (tEnd - tStart) * 1000);
         printf("\nTook %f seconds MPI time", (end - start));
 
-        writeTourToFile(finalResultFarthest[tourIdFarthest], numOfCoords+1 , outFileName1);
-        writeTourToFile(finalResultCheapest[tourIdCheapest], numOfCoords+1 , outFileName2);
-        writeTourToFile(finalResultNearest[tourIdCheapest], numOfCoords+1 , outFileName3);
+
+        printf("Tour id farthest : %d\n", tourIdFarthest);
+        printf("Cost: %f\n", minimumCostFarthest);
+        int i;
+        for (i = 0; i <= numOfCoords; i++)
+        {
+            printf("%d ", finalResultFarthest[tourIdFarthest][i]);
+            printf("%d ", finalResultCheapest[tourIdCheapest][i]);
+            printf("%d ", finalResultNearest[tourIdNearest][i]);
+        }
+
+        writeTourToFile(finalResultCheapest[tourIdCheapest], numOfCoords+1 , outFileName1);
+        writeTourToFile(finalResultFarthest[tourIdFarthest], numOfCoords+1 , outFileName2);
+        writeTourToFile(finalResultNearest[tourIdNearest], numOfCoords+1 , outFileName3);
 
         for (processId = 0; processId < commSize; processId++)
         {
@@ -300,9 +318,6 @@ int main(int argc, char *argv[]){
         free(finalResultNearest);
 
     }
-
-
-
 
     MPI_Finalize();
 
