@@ -229,6 +229,8 @@ int main(int argc, char *argv[]){
     MPI_Gather(shortestTourArrayNearest, numOfCoords + 1, MPI_INT, gatheredToursNearest, numOfCoords + 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Gather(&shortestTourNearest, 1, MPI_DOUBLE, gatheredTourCostsNearest, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
+
+    // Determining the actual shortest tour on root node from the gathered tours from all MPI processes
     if (myRank == 0)
     {
         int processId=0;
@@ -245,6 +247,7 @@ int main(int argc, char *argv[]){
         int **finalResultNearest = (int **)malloc(commSize * sizeof(int *));
 
 
+        // Since we have a one dimensional array for all tours breaking it back into multiple arrays per process
         for (processId = 0; processId < commSize; processId++)
         {
             finalResultFarthest[processId] = (int *)malloc((numOfCoords + 1) * sizeof(int));
@@ -259,25 +262,19 @@ int main(int argc, char *argv[]){
                 finalResultNearest[processId][i] = gatheredToursNearest[processId * (numOfCoords + 1) + i];
             }
 
-            if (gatheredTourCostsFarthest[processId] < minimumCostFarthest ||
-                (gatheredTourCostsFarthest[processId] == minimumCostFarthest &&
-                 finalResultFarthest[processId][0] < finalResultFarthest[tourIdFarthest][0]))
+            if (gatheredTourCostsFarthest[processId] < minimumCostFarthest)
             {
                 minimumCostFarthest = gatheredTourCostsFarthest[processId];
                 tourIdFarthest = processId;
             }
 
-            if (gatheredTourCostsCheapest[processId] < minimumCostCheapest ||
-                (gatheredTourCostsCheapest[processId] == minimumCostCheapest &&
-                 finalResultCheapest[processId][0] < finalResultCheapest[tourIdCheapest][0]))
+            if (gatheredTourCostsCheapest[processId] < minimumCostCheapest)
             {
                 minimumCostCheapest = gatheredTourCostsCheapest[processId];
                 tourIdCheapest = processId;
             }
 
-            if (gatheredTourCostsNearest[processId] < minimumCostNearest ||
-                (gatheredTourCostsNearest[processId] == minimumCostNearest &&
-                 finalResultNearest[processId][0] < finalResultNearest[tourIdNearest][0]))
+            if (gatheredTourCostsNearest[processId] < minimumCostNearest)
             {
                 minimumCostNearest = gatheredTourCostsNearest[processId];
                 tourIdNearest = processId;
